@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${film.title}">Un film</title>
+    <div th:replace="fragments/layout :: header-css">
+
+    </div>
+</head>
+<body>
+
+<div th:include="fragments/layout :: header-page">
+</div>
+
+
+<div class="ui container padded grid">
+    <div class="two column row">
+        <div class="four wide column">
+            <div class="ui medium image">
+                <img src="#" th:src="@{'/img/poster/film/'+${film.id}}"/>
+            </div>
+        </div>
+        <div class="twelve wide column">
+            <h1 th:text="${film.title}">Titre</h1>
+            <div th:utext="${film.summary}">Résumé du film</div>
+            <h4>Notation : <span th:text="${film.rating}">5.0</span></h4>
+            <h4>Date de sortie : <span th:text="${film.releaseDate}">01/01/2000</span></h4>
+            <h4>Réslisateur : <span th:text="${film.director.givenname}+' '+${film.director.surname}">John Doe</span></h4>
+            <h4>Genres : <span th:each="genre: ${film.genres}"><span th:text="${genre.name}">genre </span>, </span></h4>
+            <h3>Casting</h3>
+            <h4 th:each="role: ${film.roles}"><span th:text="${role.actor.givenname}">John</span>
+                <span th:text="${role.actor.surname}">Doe</span> joue : <span th:text="${role.name}">un rôle</span>
+            </h4>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div th:include="fragments/layout :: footer-js"></div>
+<script type="application/javascript">
+    $('#menu-films').addClass("active");
+</script>
+</body>
+</html>

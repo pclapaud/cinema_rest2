@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des films</title>
+    <div th:replace="fragments/layout :: header-css">
+
+    </div>
+</head>
+
+<body>
+
+<div th:include="fragments/layout :: header-page">
+</div>
+
+<div class="ui container padded grid">
+    <div class="two column row" th:each="film: ${films}">
+        <div class="one wide middle aligned column">
+            <div class="ui tiny image">
+                <img src="http://fr.web.img4.acsta.net/r_1920_1080/pictures/15/10/18/18/56/052074.jpg"
+                th:src="@{'/img/poster/film/'+${film.id}}">
+            </div>
+        </div>
+        <div class="fifteen wide middle aligned column">
+            <p class="">
+                <span th:text="${film.title}">Titre du film</span>
+                <a href="#" th:href="@{'/film/detail/'+${film.id}}"><i class="green small eye icon"></i></a>
+                <a href="#" th:href="@{'/film/mod/'+${film.id}}"><i class="small edit icon"></i></a>
+                <a href="#"><i class="red small erase icon"></i> </a>
+            </p>
+            </div>
+    </div>
+</div>
+
+
+<div th:include="fragments/layout :: footer-js"></div>
+<script type="application/javascript">
+    $('#menu-films').addClass("active");
+</script>
+
+</body>
+</html>

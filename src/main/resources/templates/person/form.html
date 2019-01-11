@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="#" th:action="@{/person/add}" th:object="${person}" enctype="multipart/form-data" method="post">
+    <input type="hidden" th:field="*{id}"/>
+    <input type="hidden" th:field="*{imagePath}"/>
+    <p>Prénom : <input type="text" th:field="*{givenname}"/></p>
+    <p>Nom : <input type="text" th:field="*{surname}"/></p>
+    <p>Annee de naissance : <input type="date" th:field="*{birthday}"/></p>
+
+    <p>Photo : <input type="file" name="photo"/> <span th:text="*{imagePath}">Fichier photo</span></p>
+
+    <input type="submit" value="Valider" />
+</form>
+<form action="#" th:object="${newrole}" method="post">
+
+    <input type="text" th:field="*{name}" placeholder="name">
+    <input type="text" th:field="*{rank}" placeholder="rank">
+    <input type="submit" value="valider">
+</form>
+</body>
+</html>

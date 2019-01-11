@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des genres</title>
+    <div th:replace="fragments/layout :: header-css"></div>
+</head>
+<body>
+<div th:include="fragments/layout :: header-page"></div>
+
+<div class="ui modal">
+    <div class="ui container padded">
+        <div class="Header">
+            <h3>Genre</h3>
+        </div>
+        <div class="ui padded form">
+            <input type="hidden" name="id" id="id-genre">
+            <div class="fourteen wide field">
+                <input type="text" name="name" id="name-genre">
+            </div>
+            <div class="actions">
+                <div class="circular ui green icon button" onclick="addGenre()" id="add-button">
+                    <i class="white plus icon"></i>
+                </div>
+                <div class="circular ui green icon button" onclick="updateGenre()" id="mod-button">
+                    <i class="white check icon icon"></i>
+                </div>
+                <div class="circular ui icon red button" onclick="eraseGenre()" id="del-button">
+                    <i class="white minus icon"></i>
+                </div>
+                <div class="circular ui icon blue button" onclick="exitDialog()" id="exit-button">
+                    <i class="white close icon icon"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ui primary button" onclick="openDialogAdd()">
+    Ajouter un genre
+</div>
+<table class="ui selectable celled table">
+    <thead>
+    <tr>
+        <th>Genre</th>
+    </tr>
+    </thead>
+    <tbody id="genre-body">
+    <tr id="rgenre-template"><td id="genre-template">un genre</td></tr>
+    <tr th:each="genre: ${genres}" th:id="'rgenre'+${genre.id}" th:onclick="'openDialogMod(' + ${genre.id}+')'">
+        <td th:text="${genre.name}" th:id="'genre'+ ${genre.id}">Un genre</td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:include="fragments/layout :: footer-js"></div>
+
+<script type="application/javascript">
+    $('#menu-genres').addClass("active");
+    $('.ui.dropdown').dropdown();
+    $('.ui.modal').modal();
+    $('#rgenre-template').hide();
+
+    
+
+    function openDialogMod(idGenre) {
+        $('#id-genre').val(idGenre);
+        $('#name-genre').val($('#genre' + idGenre).text());
+        $('#add-button').hide();
+        $('#mod-button').show();
+        $('#del-button').show();
+        $('.ui.modal').modal('show');
+    }
+
+    function openDialogAdd() {
+        $('#id-genre').val(0);
+        $('#name-genre').val("");
+        $('#add-button').show();
+        $('#mod-button').hide();
+        $('#del-button').hide();
+        $('.ui.modal').modal('show');
+    }
+
+    function addGenre() {
+        $('.ui.modal').modal('hide');
+        var genreVal = {
+            "id": $('#id-genre').val(),
+            "name": $('#name-genre').val()
+        };
+
+        $.ajax({
+            url: '/api/genre',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessAddNameGenre,
+            error: onErrorOnGenreApi,
+            data: JSON.stringify(genreVal)
+        });
+    }
+    
+    function eraseGenre() {
+        $('.ui.modal').modal('hide');
+        var genreVal = {
+            "id": $('#id-genre').val(),
+            "name": $('#name-genre').val()
+        };
+        $.ajax({
+            url: '/api/genre/' + genreVal.id,
+            type: 'delete',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessEraseNameGenre,
+            error: onErrorOnGenreApi,
+            data: JSON.stringify(genreVal)
+        });
+    }
+
+    function updateGenre() {
+        $('.ui.modal').modal('hide');
+        var genreVal = {
+            "id": $('#id-genre').val(),
+            "name": $('#name-genre').val()
+        };
+        $.ajax({
+            url: '/api/genre',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessUpdateNameGenre,
+            error: onErrorOnGenreApi,
+            data: JSON.stringify(genreVal)
+        });
+    }
+
+    function onSuccessAddNameGenre(result){
+        var row = $('#rgenre-template').clone();
+        row.attr("id", 'rgenre'+result.id);
+        var col = row.find('#genre-template');
+        col.attr("id", 'genre'+result.id);
+        col.text(result.name);
+        row.show();
+        $('#genre-body').append(row);
+        $('#rgenre'+result.id).on('click', function () {
+            openDialogMod(result.id);
+        });
+    }
+
+    function onSuccessUpdateNameGenre(result) {
+        $("#genre" + result.id).text(result.name);
+    }
+
+
+    function onErrorOnGenreApi(jqXHR, textStatus, errorThrown) {
+        console.log('jqXHR:');
+        console.log(jqXHR);
+        console.log("message d'erreur: " + jqXHR.responseJSON.message);
+        console.log('textStatus:');
+        console.log(textStatus);
+        console.log('errorThrown:');
+        console.log(errorThrown);
+        alert("Echec de l'opération\n"+jqXHR.responseJSON.message);
+    }
+
+
+    function onSuccessEraseNameGenre(result) {
+        $('#rgenre' + result.id).remove();
+    }
+    
+    function exitDialog() {
+        $('.ui.modal').modal('hide');
+    }
+
+
+</script>
+</body>
+</html>

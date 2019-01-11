@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Title</title>
+    <div th:replace="fragments/layout :: header-css">
+
+    </div>
+</head>
+<body>
+<div th:include="fragments/layout :: header-page">
+</div>
+
+<h2 class="ui dividing">Fiche signalétique</h2>
+<!--th:action="@{/film/add}"-->
+<div
+        action="#"
+        class="ui form"
+        id="film-form"
+        method="post"
+        th:object="${film}"
+>
+    <input id="film-id" th:field="${film.id}" type="hidden">
+    <input  th:field="${film.imagePath}" type="hidden">
+    <div class="field">
+        <label>Titre</label>
+        <input id="film-title" th:field="${film.title}" type="text">
+    </div>
+    <div class="three fields">
+        <div class="two wide field">
+            <label>Notation</label>
+            <input id="film-rating" th:field="*{rating}" type="number">
+        </div>
+        <div class="four wide field">
+            <label>Date de sortie</label>
+            <input id="film-releaseDate" th:field="*{releaseDate}" type="date">
+        </div>
+        <div class="ten wide field">
+            <label>Réalisateur</label>
+            <select  th:field="${film.director}" class="ui search dropdown">
+                <option id="film-director"
+                        th:each="person: ${persons}"
+                        th:text="${person.givenname}+' '+${person.surname}"
+                        th:value="${person.id}"
+
+                >
+                    Prénom Nom
+                </option>
+            </select>
+        </div>
+    </div>
+    <div class="field">
+        <label>Genres</label>
+        <select id="film-genres" class="ui fluid dropdown" multiple="" th:field="*{genres}">
+            <option
+                    th:each="genre: ${genresFilm}"
+                    th:text="${genre.name}"
+                    th:value="${genre.id}"
+            >
+                Drame
+            </option>
+        </select>
+    </div>
+    <div class="field">
+        <label>Résumé</label>
+        <textarea id="film-summary" form="film-form" rows="5" th:field="*{summary}"></textarea>
+    </div>
+    <input onclick="formulaire()" class="ui button" type="submit" value="Valider">
+</div>
+
+
+<h2 class="ui dividing header">Casting</h2>
+
+<form class="ui form"
+      method="post"
+      th:action="@{'/film/modrole/'+${play.id}}"
+      th:each="play: ${film.roles}"
+      th:object="${play}"
+
+>
+    <input id="film" name="film" th:value="${film.id}" type="hidden">
+
+    <div class="four fields">
+        <div class="five wide field">
+            <label>Acteur</label>
+            <select name="actor" th:value="*{actor.id}" class="ui search dropdown">
+                <option
+                        th:each="person: ${persons}"
+                        th:selected="${person.id == play.actor.id}"
+                        th:text="${person.givenname}+' '+${person.surname}"
+                        th:value="${person.id}"
+                >
+                    Prénom Nom
+                </option>
+            </select>
+        </div>
+        <div class="six wide field">
+            <label>Rôle</label>
+            <input name="name" th:value="*{name}" type="text">
+        </div>
+        <div class="two wide field">
+            <label>Rang</label>
+            <input name="rank" th:value="*{rank}" type="number">
+        </div>
+
+
+        <div class="three wide field">
+            <label>&nbsp;</label>
+
+
+                <button type="submit" class="circular ui green icon button">
+                    <i class="white check icon icon"></i>
+                </button>
+
+                <a href="#" th:href="@{'/film/rmrole/'+ *{id}}" class="circular ui icon red button">
+                    <i class="white close icon icon"></i>
+                </a>
+
+        </div>
+    </div>
+
+
+</form>
+
+<form
+        action="#"
+        class="ui form"
+        method="post"
+        th:action="@{/film/addrole}"
+        th:object="${newrole}"
+>
+    <input id="film" name="film" th:value="${film.id}" type="hidden">
+    <div class="four fields">
+        <div class="five wide field">
+            <label>Acteur</label>
+            <select name="actor" class="ui search dropdown">
+                <option value="" selected disabled>Choisissez un acteur</option>
+                <option
+                        th:each="person: ${persons}"
+                        th:text="${person.givenname}+' '+${person.surname}"
+                        th:value="${person.id}"
+
+                >
+                    Prénom Nom
+                </option>
+            </select>
+        </div>
+        <div class="six wide field">
+            <label>Rôle</label>
+            <input name="name" th:value="*{name}" type="text">
+        </div>
+        <div class="two wide field">
+            <label>Rang</label>
+            <input name="rank" th:value="*{rank}" type="number">
+        </div>
+
+
+        <div class="three wide field">
+            <label>&nbsp;</label>
+            <button type="submit" class="circular ui green icon button ">
+                <i class="white plus icon"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
+
+<div th:include="fragments/layout :: footer-js"></div>
+
+<script type="application/javascript">
+    $('#menu-films').addClass("active");
+    $('.ui.dropdown').dropdown();
+    $(document).ready(function () {
+        tinymce.init({
+            selector: '#summary'
+        });
+    })
+    function formulaire() {
+        var filmVal = {
+            "id": $('#film-id').val(),
+            "title": $('#film-title').val(),
+            "rating": $('#film-rating').val(),
+            "releaseDate": $('#film-releaseDate').val(),
+            "genres": $('#film-genres').val(),
+            "summary": $('#film-summary').val(),
+
+        };
+        var test = {
+            "film" : filmVal,
+            "director": $('#film-director').val()
+        }
+        console.log(test);
+        $.ajax({
+            url: '/api/film',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessAdd,
+            data: JSON.stringify(test)
+        });
+    }
+
+
+
+    function onSuccessAdd(result) {
+        console.log(result);
+
+    }
+    function onErrorOnGenreApi() {
+        console.log('jqXHR:');
+        console.log(jqXHR);
+        console.log("message d'erreur: " + jqXHR.responseJSON.message);
+        console.log('textStatus:');
+        console.log(textStatus);
+        console.log('errorThrown:');
+        console.log(errorThrown);
+        alert("Echec de l'opération\n"+jqXHR.responseJSON.message);
+
+    }
+
+</script>
+</body>
+</html>
