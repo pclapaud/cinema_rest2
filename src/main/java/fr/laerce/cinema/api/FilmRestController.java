@@ -17,12 +17,14 @@ public class FilmRestController {
     private FilmManager filmManager;
     private PersonManager personManager;
     private GenreDao genredao;
+    private RoleDao roledao;
 
-    public FilmRestController(FilmManager filmManager,PersonManager personManager,GenreDao genredao){
+    public FilmRestController(FilmManager filmManager,PersonManager personManager,GenreDao genredao,RoleDao roledao){
         assert(filmManager != null);
         this.filmManager = filmManager;
         this.personManager = personManager;
         this.genredao = genredao;
+        this.roledao = roledao;
     }
 
 
@@ -49,5 +51,29 @@ public class FilmRestController {
         film.setGenres(lesgenres);
         film = filmManager.save2(film);
         return film;
+    }
+    @PostMapping("/mod")
+    public Play modRole(@RequestBody Container2 container2){
+        Play play = roledao.findById(container2.id).get();
+        play.setName(container2.name);
+        play.setRank(container2.rank);
+        Person acteur = personManager.findById(container2.acteur);
+        play.setActor(acteur);
+        Film film = filmManager.getById(container2.film);
+        play.setFilm(film);
+        play = roledao.save(play);
+        return play;
+    }
+    @PostMapping("/add")
+    public Play addRole(@RequestBody Container2 container2){
+        Play play = new Play();
+        play.setName(container2.name);
+        play.setRank(container2.rank);
+        Person acteur = personManager.findById(container2.acteur);
+        play.setActor(acteur);
+        Film film = filmManager.getById(container2.film);
+        play.setFilm(film);
+        play = roledao.save(play);
+        return play;
     }
 }
