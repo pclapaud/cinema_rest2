@@ -37,8 +37,8 @@
         </div>
         <div class="ten wide field">
             <label>Réalisateur</label>
-            <select  th:field="${film.director}" class="ui search dropdown">
-                <option id="film-director"
+            <select id="film-director" th:field="${film.director}" class="ui search dropdown">
+                <option
                         th:each="person: ${persons}"
                         th:text="${person.givenname}+' '+${person.surname}"
                         th:value="${person.id}"
@@ -170,11 +170,6 @@
 <script type="application/javascript">
     $('#menu-films').addClass("active");
     $('.ui.dropdown').dropdown();
-    $(document).ready(function () {
-        tinymce.init({
-            selector: '#summary'
-        });
-    })
     function formulaire() {
         var filmVal = {
             "id": $('#film-id').val(),
@@ -185,18 +180,19 @@
             "summary": $('#film-summary').val(),
 
         };
-        var test = {
+        var container = {
             "film" : filmVal,
-            "director": $('#film-director').val()
+            "director": $('#film-director').val(),
+            "genres": $('#film-genres').val()
         }
-        console.log(test);
+        console.log(container);
         $.ajax({
             url: '/api/film',
             type: 'post',
             dataType: 'json',
             contentType: 'application/json',
             success: onSuccessAdd,
-            data: JSON.stringify(test)
+            data: JSON.stringify(container)
         });
     }
 
