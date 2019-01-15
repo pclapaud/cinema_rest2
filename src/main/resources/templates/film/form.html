@@ -79,11 +79,11 @@
 
 >
     <input id="film" name="film" th:value="${film.id}" type="hidden">
-
+    <input id="role-id" name="role id" th:value="${id}" type="hidden">
     <div class="four fields">
         <div class="five wide field">
             <label>Acteur</label>
-            <select th:id="'role-actor'+${id}" name="actor" th:value="*{actor.id}" class="ui search dropdown">
+            <select th:id="'role-actor'+${play.id}" name="actor" th:value="*{actor.id}" class="ui search dropdown">
                 <option
                         th:each="person: ${persons}"
                         th:selected="${person.id == play.actor.id}"
@@ -96,11 +96,11 @@
         </div>
         <div class="six wide field">
             <label>Rôle</label>
-            <input th:id="'role-name'+${id}" name="name" th:value="*{name}" type="text">
+            <input th:id="'role-name'+${play.id}" name="name" th:value="*{name}" type="text">
         </div>
         <div class="two wide field">
             <label>Rang</label>
-            <input th:id="'role-rank'+${id}" name="rank" th:value="*{rank}" type="number">
+            <input th:id="'role-rank'+${play.id}" name="rank" th:value="*{rank}" type="number">
         </div>
 
 
@@ -108,11 +108,11 @@
             <label>&nbsp;</label>
 
 
-                <button th:onclick="'formulaireModRole('+${id}+')'" type="submit" class="circular ui green icon button">
+                <button th:onclick="'formulaireModRole('+${play.id}+')'" type="submit" class="circular ui green icon button">
                     <i class="white check icon icon"></i>
                 </button>
 
-                <a href="#" th:href="@{'/film/rmrole/'+*{id}}" class="circular ui icon red button">
+                <a href="#" th:href="@{'/film/rmrole/'+${play.id}}" class="circular ui icon red button">
                     <i class="white close icon icon"></i>
                 </a>
 
@@ -123,10 +123,10 @@
 </div>
 
 <div
+        id="parent"
         action="#"
         class="ui form"
         method="post"
-        th:action="@{/film/addrole}"
         th:object="${newrole}"
 >
     <input id="film" name="film" th:value="${film.id}" type="hidden">
@@ -176,13 +176,13 @@
             "title": $('#film-title').val(),
             "rating": $('#film-rating').val(),
             "releaseDate": $('#film-releaseDate').val(),
-            "genres": $('#film-genres').val(),
             "summary": $('#film-summary').val(),
 
         };
         var container = {
-            "role" : roleValue,
-            "director": $('#film-director').val()
+            "film" : "'"+roleValue+"'",
+            "director": $('#film-director').val(),
+            "genres": $('#film-genres').val()
         }
         console.log(container);
         $.ajax({
@@ -200,8 +200,6 @@
         //     "name": $('#role-name'+id).val(),
         //     "rank": $('#role-rank'+id).val()
         // }
-
-
         var container2 = {
             "film" : $('#film').val(),
             "acteur" : $('#role-actor'+id).val(),
@@ -219,7 +217,6 @@
             success: onSuccessAdd,
             data: JSON.stringify(container2)
         });
-
     }
     function formulaireAddRole(){
         // var playValue = {
@@ -241,13 +238,17 @@
             type: 'post',
             dataType: 'json',
             contentType: 'application/json',
-            success: onSuccessAdd,
+            success: onSuccessAdd2,
             data: JSON.stringify(container2)
         });
 
     }
 
     function onSuccessAdd(result) {
+        console.log(result);
+
+    }
+    function onSuccessAdd2(result) {
         console.log(result);
 
     }

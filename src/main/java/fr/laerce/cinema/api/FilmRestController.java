@@ -54,7 +54,8 @@ public class FilmRestController {
     }
     @PostMapping("/mod")
     public Play modRole(@RequestBody Container2 container2){
-        Play play = roledao.findById(container2.id).get();
+        Long id = container2.id;
+        Play play = roledao.findById(id).get();
         play.setName(container2.name);
         play.setRank(container2.rank);
         Person acteur = personManager.findById(container2.acteur);
