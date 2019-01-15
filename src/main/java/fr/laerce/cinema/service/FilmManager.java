@@ -19,7 +19,7 @@ public class FilmManager {
 
     /**
      * Constructeur utilisé par Spring pour la construction du bean
-     * @param genreDao le DAO qui gère le genre dans le système de persistance, ne peut être null
+     * @ param  genre Dao le DAO qui gère le genre dans le système de persistance, ne peut être null
      */
     public FilmManager(FilmDao filmDao,RoleDao roleDao){
         this.filmDao = filmDao;
@@ -69,6 +69,7 @@ public class FilmManager {
         return filmId;
     }
 
+
     /**
      * Crée un role associé à un film
      * @param filmId l'identifiant du film
@@ -85,5 +86,9 @@ public class FilmManager {
     public long saveRole(Play play){
         roleDao.save(play);
         return play.getId();
+    }
+    public long deleteFilm(Film film){
+        filmDao.deleteById(film.getId());
+        return film.getId();
     }
 }

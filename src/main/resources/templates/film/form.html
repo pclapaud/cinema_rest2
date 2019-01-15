@@ -65,6 +65,11 @@
         <label>Résumé</label>
         <textarea id="film-summary" form="film-form" rows="5" th:field="*{summary}"></textarea>
     </div>
+    <div class="field">
+        <label>Image</label>
+        <img th:src="@{'/img/poster/film/'+${film.id}}">
+        <input type="file" id="film-picture">
+    </div>
     <input onclick="formulaire()" class="ui button" type="submit" value="Valider">
 </div>
 
@@ -118,8 +123,6 @@
 
         </div>
     </div>
-
-
 </div>
 
 <div
@@ -182,7 +185,8 @@
         var container = {
             "film" : "'"+roleValue+"'",
             "director": $('#film-director').val(),
-            "genres": $('#film-genres').val()
+            "genres": $('#film-genres').val(),
+            "file": $('#film-picture').val()
         }
         console.log(container);
         $.ajax({
@@ -219,12 +223,6 @@
         });
     }
     function formulaireAddRole(){
-        // var playValue = {
-        //     "name": $('#role-name'+id).val(),
-        //     "rank": $('#role-rank'+id).val()
-        // }
-
-
         var container2 = {
             "film" : $('#film').val(),
             "acteur" : $('#role-actor-add').val(),

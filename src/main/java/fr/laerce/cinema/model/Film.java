@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Entity
+@Entity(name = "Film")
 @Table(name="films")
 public class Film {
     @Id

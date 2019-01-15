@@ -68,6 +68,15 @@ public class FilmController {
         model.addAttribute("test", 1);
         return "film/form";
     }
+    @GetMapping("/details/{id}")
+    public String detailFilm(Model model, @PathVariable("id")long id){
+        model.addAttribute("film", filmManager.getById(id));
+        model.addAttribute("persons", personManager.getAll());
+        model.addAttribute("roles", filmManager.getById(id).getRoles());
+        model.addAttribute("genres",genreManager.getAll());
+        model.addAttribute("newrole",new Play());
+        return "Film/detailsFilm";
+    }
 
 
     @PostMapping("/add")

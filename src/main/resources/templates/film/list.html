@@ -19,20 +19,24 @@
 
 <div class="ui container padded grid">
     <div class="two column row" th:each="film: ${films}">
+        <div th:id="'film-container-'+${film.id}">
         <div class="one wide middle aligned column">
             <div class="ui tiny image">
                 <img src="http://fr.web.img4.acsta.net/r_1920_1080/pictures/15/10/18/18/56/052074.jpg"
                 th:src="@{'/img/poster/film/'+${film.id}}">
             </div>
+
         </div>
         <div class="fifteen wide middle aligned column">
             <p class="">
                 <span th:text="${film.title}">Titre du film</span>
+                <input hidden th:id="'film-'+${film.id}" th:value="${film.id}">
                 <a href="#" th:href="@{'/film/detail/'+${film.id}}"><i class="green small eye icon"></i></a>
                 <a href="#" th:href="@{'/film/mod/'+${film.id}}"><i class="small edit icon"></i></a>
-                <a href="#"><i class="red small erase icon"></i> </a>
+                <a ><i th:onclick="@{'deletefilm('+${film.id}+')'}" class="red small erase icon"></i> </a>
             </p>
             </div>
+       </div>
     </div>
 </div>
 
@@ -40,6 +44,23 @@
 <div th:include="fragments/layout :: footer-js"></div>
 <script type="application/javascript">
     $('#menu-films').addClass("active");
+
+    function deletefilm(id) {
+        console.log(id);
+         var id2 = $('#film-'+id).val();
+        console.log(id2);
+        $.ajax({
+            url: '/api/film/'+ id,
+            type: 'delete',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessErase,
+        });
+    }
+    function onSuccessErase(result) {
+        console.log(result);
+        $('#film-container-' + result.id).remove();
+    }
 </script>
 
 </body>

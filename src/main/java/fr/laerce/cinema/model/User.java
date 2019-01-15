@@ -3,7 +3,8 @@ package fr.laerce.cinema.model;
 import javax.persistence.*;
 import java.util.Set;
 
-@Entity
+@Entity(name = "User")
+@Table(name="user", schema = "public")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

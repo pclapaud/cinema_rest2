@@ -1,5 +1,6 @@
 package fr.laerce.cinema.api;
 
+import fr.laerce.cinema.dao.FilmDao;
 import fr.laerce.cinema.dao.GenreDao;
 import fr.laerce.cinema.dao.RoleDao;
 import fr.laerce.cinema.model.*;
@@ -18,13 +19,15 @@ public class FilmRestController {
     private PersonManager personManager;
     private GenreDao genredao;
     private RoleDao roledao;
+    private FilmDao filmDao;
 
-    public FilmRestController(FilmManager filmManager,PersonManager personManager,GenreDao genredao,RoleDao roledao){
+    public FilmRestController(FilmManager filmManager,PersonManager personManager,GenreDao genredao,RoleDao roledao,FilmDao filmDao){
         assert(filmManager != null);
         this.filmManager = filmManager;
         this.personManager = personManager;
         this.genredao = genredao;
         this.roledao = roledao;
+        this.filmDao = filmDao;
     }
 
 
@@ -38,7 +41,7 @@ public class FilmRestController {
     }
 
     @PostMapping("")
-    public Film add(@RequestBody Container container){
+    public Film addfilm(@RequestBody Container container){
         Film film = container.film;
         Person director = personManager.findById(container.director);
         film.setDirector(director);
@@ -76,5 +79,11 @@ public class FilmRestController {
         play.setFilm(film);
         play = roledao.save(play);
         return play;
+    }
+    @DeleteMapping("/{id}")
+    public Film remove(@PathVariable("id") long id){
+        Film film = filmDao.findById(id).get();
+        filmDao.delete(film);
+        return film;
     }
 }
