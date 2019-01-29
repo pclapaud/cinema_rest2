@@ -110,30 +110,30 @@ create table film_genre
 
 
 
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (2, 'Galabru', 'Michel', 'p0002.jpg', '1922-10-27');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (24, 'Zwick', 'Edward', 'p0020.jpg', '1952-10-08');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (21, 'Marshall', 'Garry', 'p0098.jpg', '1934-11-13');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (23, 'Spielberg', 'Steven', 'p0019.jpg', '1946-12-18');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (20, 'Lucas', 'Georges', 'p0045.jpg', '1944-05-14');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (9, 'Bellamy', 'Ralph', 'p0009.jpg', '1904-06-17');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (19, 'Tavernier', 'Bertrand', 'p0110.jpg', '1941-04-25');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (15, 'Wallace Stone', 'Dee', 'p0015.jpg', '1948-12-14');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (16, 'Heston', 'Charlton', 'p0016.jpg', '1923-10-04');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (7, 'Gere', 'Richard', 'p0007.jpg', '1949-08-31');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (6, 'Fisher', 'Carrie', 'p0006.jpg', '1956-10-21');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (1, 'Noiret', 'Phillipe', 'p0001.jpg', '1930-10-01');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (13, 'Thomas', 'Henry', 'p0013.jpg', '1971-09-09');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (10, 'Hopkins', 'Anthony', 'p0010.jpg', '1937-12-31');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (3, 'Huppert', 'Isabelle', 'p0003.jpg', '1953-03-16');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (17, 'Boyd', 'Stephen', 'p0017.jpg', '1931-07-04');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (12, 'Quinn', 'Aidan', 'p0012.jpg', '1959-03-08');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (18, 'Hawkins', 'Jack', 'p0018.jpg', '1910-09-14');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (22, 'Wyler', 'William', 'p0044.jpg', '1902-07-01');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (11, 'Pitt', 'William Bradley', 'p0011.jpg', '1963-12-18');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (14, 'Barrymore', 'Drew Bythe', 'p0014.jpg', '1975-02-22');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (8, 'Roberts', 'Julia', 'p0008.jpg', '1967-10-28');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (5, 'Ford', 'Harrison', 'p0005.jpg', '1942-07-13');
-INSERT INTO persons (id, surname, givenname, image_path, birthday) VALUES (4, 'Hamill', 'Mark', 'p0004.jpg', '1951-09-25');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (2, 'Galabru', 'Michel', 'p0002.jpg', '1922-10-27');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (24, 'Zwick', 'Edward', 'p0020.jpg', '1952-10-08');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (21, 'Marshall', 'Garry', 'p0098.jpg', '1934-11-13');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (23, 'Spielberg', 'Steven', 'p0019.jpg', '1946-12-18');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (20, 'Lucas', 'Georges', 'p0045.jpg', '1944-05-14');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (9, 'Bellamy', 'Ralph', 'p0009.jpg', '1904-06-17');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (19, 'Tavernier', 'Bertrand', 'p0110.jpg', '1941-04-25');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (15, 'Wallace Stone', 'Dee', 'p0015.jpg', '1948-12-14');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (16, 'Heston', 'Charlton', 'p0016.jpg', '1923-10-04');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (7, 'Gere', 'Richard', 'p0007.jpg', '1949-08-31');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (6, 'Fisher', 'Carrie', 'p0006.jpg', '1956-10-21');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (1, 'Noiret', 'Phillipe', 'p0001.jpg', '1930-10-01');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (13, 'Thomas', 'Henry', 'p0013.jpg', '1971-09-09');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (10, 'Hopkins', 'Anthony', 'p0010.jpg', '1937-12-31');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (3, 'Huppert', 'Isabelle', 'p0003.jpg', '1953-03-16');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (17, 'Boyd', 'Stephen', 'p0017.jpg', '1931-07-04');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (12, 'Quinn', 'Aidan', 'p0012.jpg', '1959-03-08');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (18, 'Hawkins', 'Jack', 'p0018.jpg', '1910-09-14');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (22, 'Wyler', 'William', 'p0044.jpg', '1902-07-01');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (11, 'Pitt', 'William Bradley', 'p0011.jpg', '1963-12-18');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (14, 'Barrymore', 'Drew Bythe', 'p0014.jpg', '1975-02-22');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (8, 'Roberts', 'Julia', 'p0008.jpg', '1967-10-28');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (5, 'Ford', 'Harrison', 'p0005.jpg', '1942-07-13');
+INSERT INTO persons (id, name, givenname, image_path, birthday) VALUES (4, 'Hamill', 'Mark', 'p0004.jpg', '1951-09-25');
 
 INSERT INTO genres (id, name) VALUES (1, 'Comédie');
 INSERT INTO genres (id, name) VALUES (2, 'Policier');

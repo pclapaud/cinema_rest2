@@ -1,11 +1,13 @@
 package fr.laerce.cinema.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.util.List;
 
 public class Container {
-    public Film film;
     public Long director;
+    public Film film;
     public List<Long> genres;
-    public String file;
+    public MultipartFile file;
 }

@@ -5,9 +5,13 @@ import fr.laerce.cinema.dao.GenreDao;
 import fr.laerce.cinema.dao.RoleDao;
 import fr.laerce.cinema.model.*;
 import fr.laerce.cinema.service.FilmManager;
+import fr.laerce.cinema.service.ImageManager;
 import fr.laerce.cinema.service.PersonManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,14 +24,16 @@ public class FilmRestController {
     private GenreDao genredao;
     private RoleDao roledao;
     private FilmDao filmDao;
+    ImageManager imm;
 
-    public FilmRestController(FilmManager filmManager,PersonManager personManager,GenreDao genredao,RoleDao roledao,FilmDao filmDao){
+    public FilmRestController(FilmManager filmManager,PersonManager personManager,GenreDao genredao,RoleDao roledao,FilmDao filmDao,ImageManager imm){
         assert(filmManager != null);
         this.filmManager = filmManager;
         this.personManager = personManager;
         this.genredao = genredao;
         this.roledao = roledao;
         this.filmDao = filmDao;
+        this.imm = imm;
     }
 
 
@@ -80,10 +86,23 @@ public class FilmRestController {
         play = roledao.save(play);
         return play;
     }
+    @PostMapping("/addimage/{id}")
+    public Film addimage(@PathVariable("id")long id,@RequestBody MultipartFile file){
+        Film film = filmManager.getById(id);
+        if(file.getContentType().equalsIgnoreCase("image/jpeg")){
+            try {
+                imm.savePoster(film, file.getInputStream());
+            } catch (IOException ioe){
+                System.out.println("Erreur lecture : "+ioe.getMessage());
+            }
+        }
+        return filmManager.save2(film);
+    }
     @DeleteMapping("/{id}")
     public Film remove(@PathVariable("id") long id){
         Film film = filmDao.findById(id).get();
         filmDao.delete(film);
         return film;
     }
+
 }

@@ -10,8 +10,7 @@
 <form action="#" th:action="@{/person/add}" th:object="${person}" enctype="multipart/form-data" method="post">
     <input type="hidden" th:field="*{id}"/>
     <input type="hidden" th:field="*{imagePath}"/>
-    <p>Prénom : <input type="text" th:field="*{givenname}"/></p>
-    <p>Nom : <input type="text" th:field="*{surname}"/></p>
+    <p>Nom : <input type="text" th:field="*{name}"/></p>
     <p>Annee de naissance : <input type="date" th:field="*{birthday}"/></p>
 
     <p>Photo : <input type="file" name="photo"/> <span th:text="*{imagePath}">Fichier photo</span></p>

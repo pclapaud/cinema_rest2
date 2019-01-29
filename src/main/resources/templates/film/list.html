@@ -39,7 +39,13 @@
        </div>
     </div>
 </div>
-
+<a href="/film/add">Nouveau film</a>
+<form th:action="/film/peupler/">
+    <select name="filmtmdb" class="ui search dropdown">
+        <option th:each="filma: ${filmstmbd}" th:text="${filma.getTitle()}" th:value="${filma.getId()}"></option>
+    </select>
+    <input type="submit">
+</form>
 
 <div th:include="fragments/layout :: footer-js"></div>
 <script type="application/javascript">

@@ -13,5 +13,5 @@ import java.util.List;
 
 @Repository
 public interface PersonDao extends CrudRepository<Person, Long> {
-    public List<Person> findAllByOrderBySurname();
+    public List<Person> findAllByOrderByName();
 }

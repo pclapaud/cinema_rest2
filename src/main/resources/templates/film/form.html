@@ -21,7 +21,7 @@
         th:object="${film}"
 >
     <input id="film-id" th:field="${film.id}" type="hidden">
-    <input  th:field="${film.imagePath}" type="hidden">
+    <input id="film-path" th:field="${film.imagePath}" type="hidden">
     <div class="field">
         <label>Titre</label>
         <input id="film-title" th:field="${film.title}" type="text">
@@ -40,7 +40,7 @@
             <select id="film-director" th:field="${film.director}" class="ui search dropdown">
                 <option
                         th:each="person: ${persons}"
-                        th:text="${person.givenname}+' '+${person.surname}"
+                        th:text="${person.givenname}+' '+${person.name}"
                         th:value="${person.id}"
 
                 >
@@ -92,7 +92,7 @@
                 <option
                         th:each="person: ${persons}"
                         th:selected="${person.id == play.actor.id}"
-                        th:text="${person.givenname}+' '+${person.surname}"
+                        th:text="${person.givenname}+' '+${person.name}"
                         th:value="${person.id}"
                 >
                     Prénom Nom
@@ -113,7 +113,7 @@
             <label>&nbsp;</label>
 
 
-                <button th:onclick="'formulaireModRole('+${play.id}+')'" type="submit" class="circular ui green icon button">
+                <button th:onchange="'formulaireModRole('+${play.id}+')'" type="submit" class="circular ui green icon button">
                     <i class="white check icon icon"></i>
                 </button>
 
@@ -140,7 +140,7 @@
                 <option value="" selected disabled>Choisissez un acteur</option>
                 <option
                         th:each="person: ${persons}"
-                        th:text="${person.givenname}+' '+${person.surname}"
+                        th:text="${person.givenname}+' '+${person.name}"
                         th:value="${person.id}"
 
                 >
@@ -180,10 +180,11 @@
             "rating": $('#film-rating').val(),
             "releaseDate": $('#film-releaseDate').val(),
             "summary": $('#film-summary').val(),
+            "imagePath" : $('#film-path').val(),
 
         };
         var container = {
-            "film" : "'"+roleValue+"'",
+            "film" : roleValue,
             "director": $('#film-director').val(),
             "genres": $('#film-genres').val(),
             "file": $('#film-picture').val()

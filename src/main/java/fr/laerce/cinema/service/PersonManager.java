@@ -13,7 +13,7 @@ public class PersonManager {
     PersonDao personDao;
 
     public List<Person> getAll(){
-        return personDao.findAllByOrderBySurname();
+        return personDao.findAllByOrderByName();
     }
     public Person findById(long id){
         return personDao.findById(id).get();

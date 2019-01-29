@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -16,11 +18,11 @@ public class Person {
     @Column(name = "id", nullable = false)
     private long id;
     @Basic
-    @Column(name = "surname", nullable = false, length = 60)
-    private String surname;
+    @Column(name = "name", nullable = false, length = 60)
+    private String name;
     @Basic
-    @Column(name = "givenname", nullable = true, length = 40)
-    private String givenname;
+    @Column(name = "idtmbd", nullable = false, length = 60)
+    private BigInteger idtmbd;
 
     @Basic
     @Column(name = "birthday", nullable = true)
@@ -47,20 +49,12 @@ public class Person {
         this.id = id;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getName() {
+        return name;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getGivenname() {
-        return givenname;
-    }
-
-    public void setGivenname(String givenname) {
-        this.givenname = givenname;
+    public void setName(String surname) {
+        this.name = surname;
     }
 
    public LocalDate getBirthday() {
@@ -87,32 +81,38 @@ public class Person {
         this.directedFilms = films;
     }
 
+    public BigInteger getIdtmbd() {
+        return idtmbd;
+    }
+
+    public void setIdtmbd(BigInteger idtmbd) {
+        this.idtmbd = idtmbd;
+    }
+
+    public Set<Play> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Play> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Person persons = (Person) o;
-
-        if (id != persons.id) return false;
-
-        return true;
+        if (!(o instanceof Person)) return false;
+        Person person = (Person) o;
+        return getId() == person.getId() &&
+                Objects.equals(getName(), person.getName()) &&
+                Objects.equals(getIdtmbd(), person.getIdtmbd()) &&
+                Objects.equals(getBirthday(), person.getBirthday()) &&
+                Objects.equals(getImagePath(), person.getImagePath()) &&
+                Objects.equals(getDirectedFilms(), person.getDirectedFilms()) &&
+                Objects.equals(getRoles(), person.getRoles());
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", nom='" + surname + '\'' +
-                ", prenom='" + givenname + '\'' +
-                ", naissance=" + birthday +
-                ", photoPath='" + imagePath + '\'' +
-                '}';
+        return Objects.hash(getId(), getName(), getIdtmbd(), getBirthday(), getImagePath(), getDirectedFilms(), getRoles());
     }
 }

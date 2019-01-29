@@ -1,55 +1,248 @@
-<!DOCTYPE "HTML">
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <div th:replace="fragment/header.html :: header-css"></div>
-    <style>
-        th{text-align: center;}
-    </style>
+    <title th:text="${title}">Title</title>
+    <div th:replace="fragments/layout :: header-css">
+
+    </div>
 </head>
 <body>
-<form action="#" th:action="@{/film/modification}" method="post" enctype="multipart/form-data">
-    <input hidden th:value="${film.getId()}" name="id" type="text" />
-    <p>titre : <input th:value="${film.getTitle()}" name="titre" type="text" /></p>
-    <p>note : <input th:value="${film.getRating()}" name="note" type="number" /></p>
+<div th:include="fragments/layout :: header-page">
+</div>
+<table bgcolor="#008b8b" >
+    <tr><td bgcolor="#6a5acd" style="text-align: center;  vertical-align: middle;"colspan="3"><h1>Informations du film</h1></td></tr>
 
-    <p>sommaire : <input th:value="${film.getSummary()}"textarea rows="4" cols="50" name="sommaire" type="text" /></p>
-    <p>Réalisateur :
-        <select  name="realisateur">
+    <input id="film-id" th:field="${film.id}" type="hidden">
+    <input id="film-path" th:field="${film.imagePath}" type="hidden">
+    <tr>
+        <td ROWSPAN=8>
+            <img height="500px" th:src="@{'/img/poster/film/'+${film.id}}">
+        </td>
+        <th>Titre</th>
+        <td>
+            <input id="film-title" th:field="${film.title}" type="text">
+        </td>
+    </tr>
+    <tr>
+        <th>Notation</th>
+        <td>
+            <input id="film-rating" th:field="${film.rating}" type="number">
+        </td>
+    </tr>
+    <tr>
+        <th>Date de sortie</th>
+        <td>
+            <input id="film-releaseDate" th:field="${film.releaseDate}" type="date">
+        </td>
+    </tr>
+    <tr>
+        <th>Réalisateur</th>
+        <td>
+            <select id="film-director" th:field="${film.director}" class="ui search dropdown">
+                <option th:each="person: ${persons}" th:text="${person.name}" th:value="${person.id}"></option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>Genres</th>
+        <td>
+            <select id="film-genres" class="ui search dropdown" multiple name="genre">
 
-            <option th:each="person : ${persons}" th:selected="${person.getId()==film.getDirector().getId()}" th:value="${person.getId()}" th:text="${person.getSurname()+'    '+person.getGivenname()}">
+                <option th:each="genre : ${genres}" th:selected="${film.getGenres().contains(genre)}" th:value="${genre.getId()}" th:text="${genre.getName()}">
 
-        </select>
-    </p>
-    <p>Genres :
-        <select multiple name="genre">
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>Résumé</th>
+        <td>
+            <textarea style="width: 698px; height: 175px;" id="film-summary" th:field="${film.summary}"></textarea>
+        </td>
+    </tr>
+    <tr>
+        <th>Changer poster</th>
+        <form enctype="multipart/form-data">
 
-            <option th:each="genre : ${genres}" th:selected="${film.getGenres().contains(genre)}" th:value="${genre.getId()}" th:text="${genre.getName()}">
 
-        </select>
+            <td>
+                <input id="film-file" name="file" type="file"/>
+            </td>
 
-    </p>
-    <input type="submit" value="Modifier" />
-</form>
 
-<form method="get" action="/film/suprimer">
-    <input hidden type="text" name="id" th:value="${film.id}">
-    <input type="submit" value="Suprimer">
-</form>
-<form action="#" th:action="@{/film/nouveaurole}" th:object="${newrole}" method="post">
-    <input hidden name="id" th:value="${film.id}">
-    <p>person :
-        <select name="personne">
-            <option th:each="person : ${persons}" th:value="${person.getId()}" th:text="${person.getSurname()+'    '+person.getGivenname()}">
-        </select>
-    </p>
-    <p>rank : <input th:field="*{rank}" type="number" /></p>
-    <p>nom role : <input  th:field="*{name}" type="text" /></p>
 
-    <input type="submit" value="Valider" />
-</form>
+        </form>
+    </tr>
+    <tr>
 
-<div th:replace="fragment/footer.html::footer"/>
+        <td style="text-align: center;" colspan=2>
+            <input onclick="formulaire()" class="ui button" type="submit" value="Valider">
+        </td>
+    </tr>
+
+    <tr><td bgcolor="#6a5acd" style="text-align: center;  vertical-align: middle;"colspan="3"><h1>Les Roles</h1></td></tr>
+    <tr>
+    <table>
+        <tr> <th>Acteur</th><th>Rôle</th> <th>Rang</th></tr>
+        <input id="film" name="film" th:value="${film.id}" type="hidden">
+    <div id="divrole" th:each="play: ${film.roles}">
+        <tr>
+        <td>
+            <select th:onchange="'formulaireModRole('+${play.id}+')'" th:id="'role-actor'+${play.id}" name="actor" th:value="${play.actor.id}" class="ui search dropdown">
+                <option th:each="person: ${persons}" th:selected="${person.id == play.actor.id}" th:text="${person.name}" th:value="${person.id}"></option>
+            </select>
+        </td>
+        <td>
+            <input th:onchange="'formulaireModRole('+${play.id}+')'" th:id="'role-name'+${play.id}" name="name" th:value="${play.name}" type="text">
+        </td>
+        <td>
+            <input th:onchange="'formulaireModRole('+${play.id}+')'" th:id="'role-rank'+${play.id}" name="rank" th:value="${play.rank}" type="number">
+        </td>
+    </tr>
+    </div>
+</table>
+    </tr>
+    <input th:onclick="'openDialog()'" class="ui button" type="submit" value="Nouveau Role">
+</table>
+
+    <div class="ui modal">
+
+        <tr>
+            <input id="film" name="film" th:value="${film.id}" type="hidden">
+            <th>Acteur</th>
+            <td>
+                <select th:id="'role-actor-add'" name="actor" class="ui search dropdown">
+                    <option th:each="person: ${persons}" th:text="${person.name}" th:value="${person.id}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>Rôle</th>
+            <td>
+                <input th:id="'role-name-add'" name="name" th:value="${newrole.name}" type="text">
+            </td>
+        </tr>
+        <tr>
+            <th>Rang</th>
+            <td>
+                <input  th:id="'role-rank-add'" name="rank" th:value="${newrole.rank}" type="number">
+            </td>
+        </tr>
+        <button th:onclick="formulaireAddRole()" type="submit" class="circular ui green icon button ">
+            <i class="white plus icon"></i>
+        </button>
+        <button th:onclick="closeDialog()" type="submit">Annuler</button>
+    </div>
+<div th:include="fragments/layout :: footer-js"></div>
+<script type="application/javascript">
+    $('#menu-films').addClass("active");
+    $('.ui.dropdown').dropdown();
+
+    function openDialog() {
+        $('.ui.modal').modal('show');
+    }
+    function closeDialog() {
+        $('.ui.modal').modal('hide');
+    }
+    function formulaire() {
+        var roleValue = {
+            "id": $('#film-id').val(),
+            "title": $('#film-title').val(),
+            "rating": $('#film-rating').val(),
+            "releaseDate": $('#film-releaseDate').val(),
+            "summary": $('#film-summary').val(),
+            "imagePath" : $('#film-path').val(),
+
+        };
+        var container = {
+            "film" : roleValue,
+            "director": $('#film-director').val(),
+            "genres": $('#film-genres').val(),
+            // "file": $('#film-file').val()
+        }
+        console.log(container);
+        $.ajax({
+            url: '/api/film',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessAdd,
+            data: JSON.stringify(container)
+        });
+    }
+    function formulaireModRole(id){
+
+        var container2 = {
+            "film" : $('#film').val(),
+            "acteur" : $('#role-actor'+id).val(),
+            "id": id,
+            "name": $('#role-name'+id).val(),
+            "rank": $('#role-rank'+id).val()
+            // "play" : playValue
+        }
+        console.log(container2);
+        $.ajax({
+            url: '/api/film/mod',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessAdd,
+            data: JSON.stringify(container2)
+        });
+    }
+    function formulaireAddRole(){
+        var container2 = {
+            "film" : $('#film').val(),
+            "acteur" : $('#role-actor-add').val(),
+            "name": $('#role-name-add').val(),
+            "rank": $('#role-rank-add').val()
+            // "play" : playValue
+        }
+        console.log(container2);
+        $.ajax({
+            url: '/api/film/add',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessAdd2,
+            data: JSON.stringify(container2)
+        });
+    }
+
+    function onSuccessAdd(result) {
+        console.log(result);
+
+    }
+    function onSuccessAdd2(result) {
+        console.log(result);
+        closeDialog();
+        var div = $('#film');
+        tr = document.createElement('tr');
+        td = document.createElement('td');
+        Select = document.createElement('select'):
+        option = document.createElement('option');
+
+        td2 = document.createElement('td');
+        input = document.createElement('input');
+
+        td3 = document.createElement('td');
+        input2 = document.createElement('input');
+
+        tr.setAttribute("id","genre"+id);
+        tr.addEventListener("click",function () { openDialog(id) });
+        ligne.appendChild(tr);
+    }
+    function onErrorOnGenreApi() {
+        console.log('jqXHR:');
+        console.log(jqXHR);
+        console.log("message d'erreur: " + jqXHR.responseJSON.message);
+        console.log('textStatus:');
+        console.log(textStatus);
+        console.log('errorThrown:');
+        console.log(errorThrown);
+        alert("Echec de l'opération\n"+jqXHR.responseJSON.message);
+    }
+
+</script>
 </body>
 </html>

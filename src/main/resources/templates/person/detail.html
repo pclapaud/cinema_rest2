@@ -7,7 +7,7 @@ xmlns:th="http://www.thymeleaf.org">
 </head>
 <body>
 <h1>Détails</h1>
-<h2><span th:text="${person.getGivenname()}">Paul</span> <span th:text="${person.getSurname()}"></span> </h2>
+<h2><span th:text="${person.getName()}"></span> </h2>
 <h2>Année de naissance : <span th:text="${person.getBirthday()}">1890</span></h2>
 </body>
 </html>
