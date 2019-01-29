@@ -8,6 +8,7 @@ import fr.laerce.cinema.model.Play;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Component
@@ -33,6 +34,9 @@ public class FilmManager {
 
     public Film getById(long id){
         return filmDao.findById(id).get();
+    }
+    public Film getByIdtmbd(BigInteger id){
+        return filmDao.findByIdtmbd(id);
     }
 
     public List<Film> getAll(){

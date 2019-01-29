@@ -18,4 +18,7 @@ public class PersonManager {
     public Person findById(long id){
         return personDao.findById(id).get();
     }
+    public Person save(Person person){
+        return personDao.save(person);
+    }
 }

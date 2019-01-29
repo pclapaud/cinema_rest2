@@ -40,9 +40,10 @@
     </div>
 </div>
 <a href="/film/add">Nouveau film</a>
-<form th:action="/film/peupler/">
-    <select name="filmtmdb" class="ui search dropdown">
-        <option th:each="filma: ${filmstmbd}" th:text="${filma.getTitle()}" th:value="${filma.getId()}"></option>
+
+<form method="get" action="/film/A/">
+    <select name="id" class="ui search dropdown">
+        <option th:each="filma: ${filmstmbd}" th:text="${filma.getTitle()}" th:value="${filma.getIdtmbd()}"></option>
     </select>
     <input type="submit">
 </form>

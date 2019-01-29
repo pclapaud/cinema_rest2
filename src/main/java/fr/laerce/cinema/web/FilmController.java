@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.laerce.cinema.dao.*;
 import fr.laerce.cinema.model.Film;
 import fr.laerce.cinema.model.Film_Tmbd;
+import fr.laerce.cinema.model.Person;
 import fr.laerce.cinema.model.Play;
 import fr.laerce.cinema.service.FilmManager;
 import fr.laerce.cinema.service.GenreManager;
@@ -12,17 +13,26 @@ import fr.laerce.cinema.service.ImageManager;
 import fr.laerce.cinema.service.PersonManager;
 import org.apache.commons.io.FileUtils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +43,8 @@ import java.util.zip.GZIPInputStream;
 @RequestMapping("/film")
 public class FilmController {
 
+    @Value("${key}")
+    private String apiKey;
 
     @Autowired
     FilmManager filmManager;
@@ -46,6 +58,8 @@ public class FilmController {
     @Autowired
     Film_TmbdDao film_tmbdDao;
 
+    @Autowired
+    RoleDao roledao;
 
     @Autowired
     ImageManager imm;
@@ -151,9 +165,6 @@ public class FilmController {
                 }
             }
 
-
-
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -165,42 +176,130 @@ public class FilmController {
         model.addAttribute("films", films);
         return "film/list";
     }
-    @GetMapping("/peupler/{id}")
-    public String modRole(@PathVariable("id") long id, Model model) {
-        try {
-                System.out.println(id);
-                String filenameMovie = "https://api.themoviedb.org/3/movie/"+id+"?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR";
-                InputStream isMovie = new URL(filenameMovie).openStream();
-                Map<String,List<String>> headers =  new URL(filenameMovie).openConnection().getHeaderFields();
-                InputStream bufferedISMovie = new BufferedInputStream(isMovie);
-                BufferedReader rdMovie = new BufferedReader(new InputStreamReader(bufferedISMovie, StandardCharsets.UTF_8));
+    private long secondsBeforeReset(String value){
+        long timestamp = Long.valueOf(stripBraces(value));
+        LocalDateTime resetTime =
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
+        LocalDateTime now = LocalDateTime.now();
+        return now.until( resetTime, ChronoUnit.SECONDS);
+    }
 
-                System.out.println(rdMovie.readLine());
-                Set<Map.Entry<String, List<String>>> entrySet = headers.entrySet();
-                for (Map.Entry<String, List<String>> entry : entrySet) {
-                    String headerName = entry.getKey();
+    private String stripBraces(String value){
+        return value.substring(0, value.length()-1).substring(1);
+    }
+    private static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
+    }
+    @GetMapping("/A/")
+    public String modfilm2(@RequestParam("id") long id, Model model) {
 
-                    if (headerName.equals("X-RateLimit-Remaining")){
-                        System.out.println("Header Name:" + headerName);
-                        List<String> headerValues = entry.getValue();
-                        for (String value : headerValues) {
-                            System.out.print("Header value:" + value);
-                        }
-                        System.out.println();
-                    }
+        RestTemplate template = new RestTemplate();
+        ResponseEntity<String> response;
+        long reset;
+
+        String resourceUrl = "https://api.themoviedb.org/3/movie/"+id+"?api_key="+apiKey+"&language=fr-FR";
+        response = template.getForEntity(resourceUrl, String.class);
+        Film filma = new Film();
+        JSONObject film = new JSONObject(response.getBody());
+        if (filmManager.getByIdtmbd(film.getBigInteger("id"))==null){
+            JSONArray genres = (JSONArray) film.get("genres");
+            filma.setTitle(film.getString("title"));
+            filma.setIdtmbd(film.getBigInteger("id"));
+            filma.setSummary(film.getString("overview"));
+            String ann = film.optString("release_date");
+            if (ann.length()!=0){
+                filma.setReleaseDate(LocalDate.parse(ann));
+            }
+            String filename = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+film.optString("poster_path");
+            try {
+                InputStream is = new URL(filename).openStream();
+                imm.savePoster(filma,is);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            filma.setRating(film.getDouble("popularity"));
+            filma = filmManager.save2(filma);
+            for(int i = 0; i < genres.length(); i++){
+                JSONObject genre = (JSONObject) genres.get(i);
+                System.out.println("- Genre : "+genre.getString("name"));
+            }
+            System.out.println("--------\nRequetes restantes : "+stripBraces(response.getHeaders().get("x-ratelimit-remaining").toString()));
+            reset = secondsBeforeReset(response.getHeaders().get("x-ratelimit-reset").toString());
+            System.out.println("Temps restant avant reset : "+reset+"\n\n");
+        }
+
+
+
+        String resourceCredit = "https://api.themoviedb.org/3/movie/"+id+"/credits?api_key="+apiKey+"&language=fr-FR";
+        response = template.getForEntity(resourceCredit, String.class);
+        JSONObject credit = new JSONObject(response.getBody());
+        JSONArray cast = (JSONArray) credit.get("cast");
+        for (int i = 0; i < cast.length(); i++ ) {
+            JSONObject role = (JSONObject) cast.get(i);
+            int stringId = role.getInt("id");
+            String resourceCreditcast = "https://api.themoviedb.org/3/person/"+stringId+"?api_key="+apiKey+"&language=fr-FR";
+            ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
+            JSONObject person = new JSONObject(responsecast.getBody());
+            Person personne = new Person();
+            String ann2 = person.optString("birthday");
+            if (ann2.length()!=0){
+                personne.setBirthday(LocalDate.parse(ann2));
+            }
+            String filename2 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+person.optString("profile_path");
+            try {
+                InputStream is2 = new URL(filename2).openStream();
+                imm.savePhoto(personne,is2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            personne.setName(person.optString("name"));
+            personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
+            personne = personManager.save(personne);
+            Play play = new Play();
+            play.setName(role.optString("character"));
+            play.setRank(role.optInt("order"));
+            play.setActor(personne);
+            play.setFilm(filma);
+            play = roledao.save(play);
+        }
+        JSONArray crew = (JSONArray) credit.get("crew");
+        for (int i = 0; i < crew.length(); i++ ) {
+            JSONObject role = (JSONObject) crew.get(i);
+            if (role.getString("job").equals("Director")) {
+                int stringId = role.getInt("id");
+                String resourceCreditcast = "https://api.themoviedb.org/3/person/" + stringId + "?api_key=" + apiKey + "&language=fr-FR";
+                ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
+                JSONObject person = new JSONObject(responsecast.getBody());
+                Person personne = new Person();
+                String ann3 = person.optString("birthday");
+                if (ann3.length() != 0) {
+                    personne.setBirthday(LocalDate.parse(ann3));
                 }
-                System.out.println("ok");
-
-
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+                String filename3 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + person.optString("profile_path");
+                try {
+                    InputStream is = new URL(filename3).openStream();
+                    imm.savePhoto(personne, is);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                personne.setName(person.optString("name"));
+                personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
+                personne = personManager.save(personne);
+                filma.setDirector(personne);
+            }
         }
+        System.out.println("--------\nRequetes restantes : "+stripBraces(response.getHeaders().get("x-ratelimit-remaining").toString()));
+        reset = reset = secondsBeforeReset(response.getHeaders().get("x-ratelimit-reset").toString());
+        System.out.println("Temps restant avant reset : "+reset+"\n\n");
+
+
         Iterable<Film> films = filmManager.getAll();
+        Iterable<Film_Tmbd> filmsTmbd = film_tmbdDao.findAll();
         model.addAttribute("films", films);
+        model.addAttribute("filmstmbd", filmsTmbd);
         return "film/list";
     }
-
 }
+
+
