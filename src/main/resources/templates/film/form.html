@@ -40,7 +40,7 @@
             <select id="film-director" th:field="${film.director}" class="ui search dropdown">
                 <option
                         th:each="person: ${persons}"
-                        th:text="${person.givenname}+' '+${person.name}"
+                        th:text="${person.name}"
                         th:value="${person.id}"
 
                 >
@@ -92,7 +92,7 @@
                 <option
                         th:each="person: ${persons}"
                         th:selected="${person.id == play.actor.id}"
-                        th:text="${person.givenname}+' '+${person.name}"
+                        th:text="${person.name}"
                         th:value="${person.id}"
                 >
                     Prénom Nom
@@ -140,7 +140,7 @@
                 <option value="" selected disabled>Choisissez un acteur</option>
                 <option
                         th:each="person: ${persons}"
-                        th:text="${person.givenname}+' '+${person.name}"
+                        th:text="${person.name}"
                         th:value="${person.id}"
 
                 >

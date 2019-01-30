@@ -192,7 +192,7 @@ public class FilmController {
         return (double) Math.round(value * scale) / scale;
     }
     @GetMapping("/A/")
-    public String modfilm2(@RequestParam("id") long id, Model model) {
+    public String modfilm2(@RequestParam("id") BigInteger id, Model model) {
 
         RestTemplate template = new RestTemplate();
         ResponseEntity<String> response;
@@ -228,6 +228,9 @@ public class FilmController {
             reset = secondsBeforeReset(response.getHeaders().get("x-ratelimit-reset").toString());
             System.out.println("Temps restant avant reset : "+reset+"\n\n");
         }
+        else {
+            filma = filmManager.getByIdtmbd(id);
+        }
 
 
 
@@ -237,55 +240,70 @@ public class FilmController {
         JSONArray cast = (JSONArray) credit.get("cast");
         for (int i = 0; i < cast.length(); i++ ) {
             JSONObject role = (JSONObject) cast.get(i);
-            int stringId = role.getInt("id");
-            String resourceCreditcast = "https://api.themoviedb.org/3/person/"+stringId+"?api_key="+apiKey+"&language=fr-FR";
-            ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
-            JSONObject person = new JSONObject(responsecast.getBody());
-            Person personne = new Person();
-            String ann2 = person.optString("birthday");
-            if (ann2.length()!=0){
-                personne.setBirthday(LocalDate.parse(ann2));
-            }
-            String filename2 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+person.optString("profile_path");
-            try {
-                InputStream is2 = new URL(filename2).openStream();
-                imm.savePhoto(personne,is2);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            personne.setName(person.optString("name"));
-            personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
-            personne = personManager.save(personne);
-            Play play = new Play();
-            play.setName(role.optString("character"));
-            play.setRank(role.optInt("order"));
-            play.setActor(personne);
-            play.setFilm(filma);
-            play = roledao.save(play);
-        }
-        JSONArray crew = (JSONArray) credit.get("crew");
-        for (int i = 0; i < crew.length(); i++ ) {
-            JSONObject role = (JSONObject) crew.get(i);
-            if (role.getString("job").equals("Director")) {
-                int stringId = role.getInt("id");
-                String resourceCreditcast = "https://api.themoviedb.org/3/person/" + stringId + "?api_key=" + apiKey + "&language=fr-FR";
+            BigInteger BigIntegerId = role.getBigInteger("id");
+            Person personne = null;
+            if (personManager.findByIdtmbd(BigIntegerId)==null){
+                String resourceCreditcast = "https://api.themoviedb.org/3/person/"+BigIntegerId+"?api_key="+apiKey+"&language=fr-FR";
                 ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
                 JSONObject person = new JSONObject(responsecast.getBody());
-                Person personne = new Person();
-                String ann3 = person.optString("birthday");
-                if (ann3.length() != 0) {
-                    personne.setBirthday(LocalDate.parse(ann3));
+                personne = new Person();
+                String ann2 = person.optString("birthday");
+                if (ann2.length()!=0){
+                    personne.setBirthday(LocalDate.parse(ann2));
                 }
-                String filename3 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + person.optString("profile_path");
+                String filename2 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+person.optString("profile_path");
                 try {
-                    InputStream is = new URL(filename3).openStream();
-                    imm.savePhoto(personne, is);
+                    InputStream is2 = new URL(filename2).openStream();
+                    imm.savePhoto(personne,is2);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 personne.setName(person.optString("name"));
                 personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
                 personne = personManager.save(personne);
+            }
+            else{
+                personne = personManager.findByIdtmbd(BigIntegerId);
+            }
+            if (roledao.findByNameAndActorAndFilm(role.optString("character"),personne,filma)==null){
+                Play play = new Play();
+                play.setName(role.optString("character"));
+                play.setRank(role.optInt("order"));
+                play.setActor(personne);
+                play.setFilm(filma);
+                play = roledao.save(play);
+            }
+
+        }
+        JSONArray crew = (JSONArray) credit.get("crew");
+        for (int i = 0; i < crew.length(); i++ ) {
+            JSONObject role = (JSONObject) crew.get(i);
+            if (role.getString("job").equals("Director")) {
+                Person personne = null;
+                BigInteger BigIntegerId = role.getBigInteger("id");
+                if (personManager.findByIdtmbd(BigIntegerId)==null) {
+                    String resourceCreditcast = "https://api.themoviedb.org/3/person/" + BigIntegerId + "?api_key=" + apiKey + "&language=fr-FR";
+                    ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
+                    JSONObject person = new JSONObject(responsecast.getBody());
+                     personne = new Person();
+                    String ann3 = person.optString("birthday");
+                    if (ann3.length() != 0) {
+                        personne.setBirthday(LocalDate.parse(ann3));
+                    }
+                    String filename3 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + person.optString("profile_path");
+                    try {
+                        InputStream is = new URL(filename3).openStream();
+                        imm.savePhoto(personne, is);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    personne.setName(person.optString("name"));
+                    personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
+                    personne = personManager.save(personne);
+                }
+                else{
+                        personne = personManager.findByIdtmbd(BigIntegerId);
+                    }
                 filma.setDirector(personne);
             }
         }
@@ -294,10 +312,6 @@ public class FilmController {
         System.out.println("Temps restant avant reset : "+reset+"\n\n");
 
 
-        Iterable<Film> films = filmManager.getAll();
-        Iterable<Film_Tmbd> filmsTmbd = film_tmbdDao.findAll();
-        model.addAttribute("films", films);
-        model.addAttribute("filmstmbd", filmsTmbd);
         return "film/list";
     }
 }
