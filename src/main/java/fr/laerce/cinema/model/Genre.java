@@ -19,7 +19,6 @@ public class Genre {
      * L'identifiant unique dans la base
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 

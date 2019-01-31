@@ -15,4 +15,6 @@ public interface GenreDao extends CrudRepository<Genre, Long> {
      */
     public List<Genre> findAllByOrderByNameAsc();
     public Genre findByName(String name);
+    public Genre findByIdOrName(long id,String name);
+
 }

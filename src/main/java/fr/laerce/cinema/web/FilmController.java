@@ -3,10 +3,7 @@ package fr.laerce.cinema.web;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.laerce.cinema.dao.*;
-import fr.laerce.cinema.model.Film;
-import fr.laerce.cinema.model.Film_Tmbd;
-import fr.laerce.cinema.model.Person;
-import fr.laerce.cinema.model.Play;
+import fr.laerce.cinema.model.*;
 import fr.laerce.cinema.service.FilmManager;
 import fr.laerce.cinema.service.GenreManager;
 import fr.laerce.cinema.service.ImageManager;
@@ -33,10 +30,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 @Controller
@@ -63,6 +57,12 @@ public class FilmController {
 
     @Autowired
     ImageManager imm;
+
+    @GetMapping("/test")
+    public String test() {
+
+        return "film/test";
+    }
 
     @GetMapping("/list")
     public String list(Model model) {
@@ -176,6 +176,38 @@ public class FilmController {
         model.addAttribute("films", films);
         return "film/list";
     }
+    @GetMapping("/peuplerGenre")
+    public String modgenre( Model model) {
+        RestTemplate template = new RestTemplate();
+        ResponseEntity<String> response;
+
+
+            String filename = "https://api.themoviedb.org/3/genre/movie/list?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR";
+            response = template.getForEntity(filename, String.class);
+            JSONObject credit = new JSONObject(response.getBody());
+            JSONArray genres = (JSONArray) credit.get("genres");
+            for (int i = 0; i < genres.length(); i++ ) {
+                JSONObject genre = (JSONObject) genres.get(i);
+                Long longId = genre.getLong("id");
+                String name = genre.getString("name");
+                Genre genree =genreManager.getById(longId);
+                System.out.println(genre);
+
+                if (genree == null) {
+                    genree = new Genre();
+                    genree.setId(longId);
+                    genree.setName(name);
+                    genreManager.save(genree);
+                }
+
+            }
+
+
+
+        Iterable<Film> films = filmManager.getAll();
+        model.addAttribute("films", films);
+        return "film/list";
+    }
     private long secondsBeforeReset(String value){
         long timestamp = Long.valueOf(stripBraces(value));
         LocalDateTime resetTime =
@@ -222,8 +254,20 @@ public class FilmController {
             filma = filmManager.save2(filma);
             for(int i = 0; i < genres.length(); i++){
                 JSONObject genre = (JSONObject) genres.get(i);
-                System.out.println("- Genre : "+genre.getString("name"));
+                Genre gen = genreManager.getById(genre.getLong("id"));
+                Set<Genre> lesgenres = filma.getGenres();
+                if (lesgenres!=null){
+                    lesgenres.add(gen);
+                    filma.setGenres(lesgenres);
+                }
+                else {
+                    lesgenres = new HashSet<>();
+                    lesgenres.add(gen);
+                    filma.setGenres(lesgenres);
+                }
+
             }
+            filma = filmManager.save2(filma);
             System.out.println("--------\nRequetes restantes : "+stripBraces(response.getHeaders().get("x-ratelimit-remaining").toString()));
             reset = secondsBeforeReset(response.getHeaders().get("x-ratelimit-reset").toString());
             System.out.println("Temps restant avant reset : "+reset+"\n\n");
@@ -305,6 +349,8 @@ public class FilmController {
                         personne = personManager.findByIdtmbd(BigIntegerId);
                     }
                 filma.setDirector(personne);
+                filmManager.save2(filma);
+
             }
         }
         System.out.println("--------\nRequetes restantes : "+stripBraces(response.getHeaders().get("x-ratelimit-remaining").toString()));

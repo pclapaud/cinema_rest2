@@ -22,7 +22,7 @@ public class Play {
     private String name;
     @ManyToOne
     @JoinColumn(name="person_id")
-    @JsonManagedReference
+    @JsonIgnore
     private Person actor;
     @ManyToOne
     @JoinColumn(name="film_id")

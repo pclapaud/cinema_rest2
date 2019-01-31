@@ -1,5 +1,7 @@
 package fr.laerce.cinema.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ public class User {
     @Column(name = "password", nullable = false, length = 120)
     private String password;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Review> reviews;
 
     public long getId() {

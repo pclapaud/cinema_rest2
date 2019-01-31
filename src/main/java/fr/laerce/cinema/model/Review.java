@@ -1,6 +1,7 @@
 package fr.laerce.cinema.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -19,9 +20,11 @@ public class Review {
     private Timestamp date;
     @ManyToOne
     @JoinColumn(name="film_id")
+    @JsonIgnore
     private Film film;
     @ManyToOne
     @JoinColumn(name="user_id")
+    @JsonIgnore
     private User user;
 
     public long getId() {

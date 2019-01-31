@@ -42,9 +42,13 @@ public class GenreManager {
      * @return le genre associé à l'id stocké dans la base
      * @throws IllegalArgumentException si id n'est pas dans la base
      */
+//    public Genre getById(long id){
+//        return genreDao.findById(id).orElseThrow(()->new IllegalArgumentException("Genre.id inexistant: "+id));
+//    }
     public Genre getById(long id){
-        return genreDao.findById(id).orElseThrow(()->new IllegalArgumentException("Genre.id inexistant: "+id));
+        return genreDao.findById(id).orElse(null);
     }
+
 
     /**
      * Sauvegarde ou crée (id=0) un genre

@@ -38,7 +38,7 @@ public class Person {
     private Set<Film> directedFilms;
 
     @OneToMany(mappedBy = "actor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonIgnore
     private Set<Play> roles;
 
     public long getId() {
@@ -113,6 +113,6 @@ public class Person {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getIdtmbd(), getBirthday(), getImagePath(), getDirectedFilms(), getRoles());
+        return Objects.hash(getId(), getName(), getIdtmbd(), getBirthday(), getImagePath());
     }
 }

@@ -171,6 +171,6 @@ public class Film {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getIdtmbd(), getRating(), getImagePath(), getSummary(), getReleaseDate(), getDirector(), getRoles(), getGenres(), getReviews());
+        return Objects.hash(getId(), getTitle(), getIdtmbd(), getRating(), getImagePath(), getSummary(), getReleaseDate());
     }
 }
