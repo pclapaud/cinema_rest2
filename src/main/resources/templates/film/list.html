@@ -42,9 +42,7 @@
 <a href="/film/add">Nouveau film</a>
 
 <form method="get" action="/film/A/">
-    <select name="id" class="ui search dropdown">
-        <option th:each="filma: ${filmstmbd}" th:text="${filma.getTitle()}" th:value="${filma.getIdtmbd()}"></option>
-    </select>
+    <input name="id" type="number">
     <input type="submit">
 </form>
 

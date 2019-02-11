@@ -25,4 +25,5 @@ public class PersonManager {
     public Person save(Person person){
         return personDao.save(person);
     }
+    public boolean existsByIdtmbd(BigInteger id){return personDao.existsByIdtmbd(id);}
 }

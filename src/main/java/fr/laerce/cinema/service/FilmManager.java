@@ -38,6 +38,7 @@ public class FilmManager {
     public Film getByIdtmbd(BigInteger id){
         return filmDao.findByIdtmbd(id);
     }
+    public boolean existsByIdtmbd(BigInteger id){return filmDao.existsByIdtmbd(id);}
 
     public List<Film> getAll(){
         return filmDao.findAllByOrderByTitle();

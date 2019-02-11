@@ -15,5 +15,6 @@ import java.util.List;
 public interface FilmDao extends CrudRepository<Film, Long> {
     public List<Film> findAllByOrderByTitle();
     public Film findByIdtmbd(BigInteger id);
+    public boolean existsByIdtmbd(BigInteger id);
 
 }

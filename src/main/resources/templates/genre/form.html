@@ -65,6 +65,7 @@
     
 
     function openDialogMod(idGenre) {
+        console.log(idGenre);
         $('#id-genre').val(idGenre);
         $('#name-genre').val($('#genre' + idGenre).text());
         $('#add-button').hide();

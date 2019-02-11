@@ -1,16 +1,11 @@
 package fr.laerce.cinema.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name="film_tmdb")
-public class Film_Tmbd {
+public class FilmTmbd {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -49,8 +44,8 @@ public class Film_Tmbd {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Film_Tmbd)) return false;
-        Film_Tmbd film_tmbd = (Film_Tmbd) o;
+        if (!(o instanceof FilmTmbd)) return false;
+        FilmTmbd film_tmbd = (FilmTmbd) o;
         return getId() == film_tmbd.getId() &&
                 getIdtmbd() == film_tmbd.getIdtmbd() &&
                 Objects.equals(getTitle(), film_tmbd.getTitle());

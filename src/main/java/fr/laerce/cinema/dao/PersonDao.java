@@ -17,4 +17,5 @@ import java.util.List;
 public interface PersonDao extends CrudRepository<Person, Long> {
     public List<Person> findAllByOrderByName();
     public Person findByIdtmbd(BigInteger id);
+    public boolean existsByIdtmbd(BigInteger id);
 }

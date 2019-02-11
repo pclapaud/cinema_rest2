@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des films</title>
+    <div th:replace="fragments/layout :: header-css">
+
+    </div>
+</head>
+
+<body>
+
+<div th:include="fragments/layout :: header-page">
+</div>
+
+<div class="ui search">
+    <input id="search" class="prompt" type="text" placeholder="Recherche Film" onchange="search()">
+    <div class="results"></div>
+</div>
+<br>
+<div class="ui grid" id="film-body">
+        <div class="two wide column" id="rfilm-template">
+            <div  id="film-template"></div>
+
+        </div>
+</div>
+
+<div class="ui modal">
+    <div class="ui container padded">
+        <div class="Header">
+            <h3>Ajouter film?</h3>
+        </div>
+        <div class="ui padded form">
+            <input type="hidden" name="id" id="id-genre">
+            <div  id="title-film"></div>
+            <div  id="overview-film"></div>
+            <div  id="popularity-film"></div>
+            <img height="100px" width="100px" id="poster_path-film">
+            <div class="actions">
+                <a class="circular ui green icon button" href="/film/A/" id="add-button">
+                    <i class="white plus icon"></i>
+                </a>
+                <div class="circular ui icon blue button" onclick="exitDialog()" id="exit-button">
+                    <i class="white close icon icon"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="fragments/layout :: footer-js"></div>
+<script type="application/javascript">
+
+
+    function search() {
+        var film = $('#search').val();
+        $('#film-body').text();
+
+        $.ajax({
+            url: 'https://api.themoviedb.org/3/search/movie?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR&query='+film+'&page=1&include_adult=false',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessDialog
+        });
+    }
+    function exitDialog(){
+        $('.ui.modal').modal('hide');
+    }
+    function onSuccessDialog(result) {
+
+        result2=result.results
+        var id = result2[0].id;
+        for (var i = 0; i < result2.length; i++) {
+            console.log(result2[i]);
+            let  id = result2[i].id;
+            var row = $('#rfilm-template').clone();
+            row.attr("id", 'rfilm'+id);
+            var col = row.find('#film-template');
+            col.attr("id", 'film'+id);
+            col.text(result2[i].title);
+            row.show();
+            $('#film-body').append(row);
+            var image = document.createElement("img");
+            image.src = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+result2[i].poster_path;
+            image.style.width = "100px";
+            image.style.height = "100px";
+            row.append(image);
+            $('#rfilm'+id).on('click', function () {
+                openDialogMod(id);
+            });
+        }
+
+    }
+    function openDialogMod(idFilm) {
+
+        console.log(idFilm);
+        var filename = 'https://api.themoviedb.org/3/movie/'+idFilm+'?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR';
+        console.log(filename);
+
+        $.ajax({
+            url: 'https://api.themoviedb.org/3/movie/'+idFilm+'?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR',
+            type: 'get',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: onSuccessA,
+            error: onError
+        });
+    }
+    function onSuccessA(result) {
+        console.log(result)
+        $('#id-film').val(result.id);
+        document.getElementById("title-film").textContent = result.title;
+        document.getElementById("overview-film").textContent = result.overview;
+        document.getElementById("popularity-film").textContent = result.popularity;
+        $('#poster_path-film').attr("src","https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+result.poster_path);
+        $('#add-button').show();
+        $('#add-button').attr("href","/film/A/?id="+result.id);
+        $('.ui.modal').modal('show');
+
+    }
+    function onError(jqXHR, textStatus, errorThrown) {
+        console.log('jqXHR:');
+        console.log(jqXHR);
+        console.log("message d'erreur: " + jqXHR.responseJSON.message);
+        console.log('textStatus:');
+        console.log(textStatus);
+        console.log('errorThrown:');
+        console.log(errorThrown);
+        alert("Echec de l'opération\n"+jqXHR.responseJSON.message);
+    }
+</script>
+
+</body>
+</html>

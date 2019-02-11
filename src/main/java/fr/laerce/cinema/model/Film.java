@@ -20,7 +20,7 @@ public class Film {
     @Column(name = "id", nullable = false)
     private long id;
     @Basic
-    @Column(name = "title", nullable = true, length = 50)
+    @Column(name = "title", nullable = true, length = 300)
     private String title;
     @Basic
     @Column(name = "idtmbd")
