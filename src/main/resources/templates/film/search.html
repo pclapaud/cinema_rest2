@@ -22,11 +22,12 @@
     <div class="results"></div>
 </div>
 <br>
-<div class="ui grid" id="film-body">
-        <div class="two wide column" id="rfilm-template">
-            <div  id="film-template"></div>
+<div class="two wide column" id="rfilm-template">
+    <div  id="film-template"></div>
 
-        </div>
+</div>
+<div class="ui grid" id="film-body">
+
 </div>
 
 <div class="ui modal">
@@ -55,7 +56,7 @@
 <div th:include="fragments/layout :: footer-js"></div>
 <script type="application/javascript">
 
-
+    $('#rfilm-template').hide();
     function search() {
         var film = $('#search').val();
         $('#film-body').text();
@@ -72,11 +73,10 @@
         $('.ui.modal').modal('hide');
     }
     function onSuccessDialog(result) {
-
+        $('#film-body').html('');
         result2=result.results
         var id = result2[0].id;
         for (var i = 0; i < result2.length; i++) {
-            console.log(result2[i]);
             let  id = result2[i].id;
             var row = $('#rfilm-template').clone();
             row.attr("id", 'rfilm'+id);
@@ -98,9 +98,9 @@
     }
     function openDialogMod(idFilm) {
 
-        console.log(idFilm);
+
         var filename = 'https://api.themoviedb.org/3/movie/'+idFilm+'?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR';
-        console.log(filename);
+
 
         $.ajax({
             url: 'https://api.themoviedb.org/3/movie/'+idFilm+'?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR',
@@ -112,7 +112,7 @@
         });
     }
     function onSuccessA(result) {
-        console.log(result)
+
         $('#id-film').val(result.id);
         document.getElementById("title-film").textContent = result.title;
         document.getElementById("overview-film").textContent = result.overview;
