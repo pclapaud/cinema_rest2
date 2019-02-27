@@ -18,9 +18,22 @@
         <div class="header item">
             <strong>Mon cinéma</strong>
         </div>
-        <a class="item" id="menu-films" href="#" th:href="@{/film/list}">Films</a>
+
         <a class="item" id="menu-persons" href="#" th:href="@{/person/list}">Personnes</a>
         <a class="item" id="menu-genres" href="#" th:href="@{/genre}">Genres</a>
+
+        <div class="ui dropdown item">
+            <i class="dropdown icon"></i>
+            Films
+            <div class="menu">
+                <!--<div class="header">Text Size</div>-->
+                <a class="item" href="/film/rechercheImportTmdb">Recherche de Films Tmdb</a>
+                <a class="item" href="/film/peuplerFilm">peupler les films(tmbd)</a>
+                <a class="item" href="/film/peuplerGenre">peupler les genres(tmbd) </a>
+                <a class="item" href="/film/rechercheBDD">Recherche de Films BDD</a>
+                <a class="item" id="menu-films" href="/film/list" >List Films</a>
+            </div>
+        </div>
     </div>
 
 
@@ -28,7 +41,7 @@
 
 
 </div>
-<div clas="ui container">
+<div clas="ui containerJsonForFilm">
     <h1>A l'affiche en ce moment</h1>
     <h2 class="ui dividing header">Date</h2>
 
@@ -46,6 +59,7 @@
         $('.ui.dropdown.item')
             .dropdown();
     </script>
+
 </div>
 </body>
 </html>

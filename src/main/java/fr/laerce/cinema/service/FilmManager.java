@@ -60,7 +60,7 @@ public class FilmManager {
 
     /**
      * Supprime un rôle dans un film
-     * @param roleId l'identifiant du rôle à supprimer
+     * @param roleId l'identifiant du rôle à deleteByUser
      * @return l'id du film auquel appartenait le rôle
      */
 

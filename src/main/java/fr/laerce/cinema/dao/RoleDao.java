@@ -14,4 +14,5 @@ public interface RoleDao extends CrudRepository<Play, Long> {
     public List<Person> findAllByOrderByName();
     public Play findByNameAndActorAndFilm(String name, Person actor, Film film);
     public boolean existsByNameAndActorAndFilm(String name, Person actor, Film film);
+
 }

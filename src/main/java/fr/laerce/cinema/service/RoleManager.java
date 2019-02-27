@@ -27,5 +27,7 @@ public class RoleManager {
     public Play save(Play play){
         return roleDao.save(play);
     }
-    public boolean existsByNameAndActorAndFilm(String name, Person actor, Film film){return roleDao.existsByNameAndActorAndFilm(name,actor,film);}
+    public boolean existsByNameAndActorAndFilm(String name, Person actor, Film film){
+        return roleDao.existsByNameAndActorAndFilm(name,actor,film);
+    }
 }

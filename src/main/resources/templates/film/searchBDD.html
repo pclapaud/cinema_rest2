@@ -97,15 +97,16 @@
 <script type="application/javascript">
 
     $('#rfilm-template').hide();
-
+    var page = 0;
     function search() {
         var film = $('#search').val();
         $('#film-body').text();
         $('#paginationn').empty();
         $('#paginationn').removeData("twbs-pagination");
         $('#paginationn').unbind("page");
+        var page = 0;
         $.ajax({
-            url: 'https://api.themoviedb.org/3/search/movie?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR&query=' + film + '&page=1&include_adult=false',
+            url: '/api/film/' + film+'/'+page,
             type: 'post',
             dataType: 'json',
             contentType: 'application/json',
@@ -120,7 +121,8 @@
     function onSuccessDialog(result) {
         $('#film-body').html('');
         console.log(result);
-        let maxPages=result.total_pages;
+        var page = 0;
+        let maxPages=result.totalPages;
 
         if (maxPages>1000){
             maxPages=1000;
@@ -129,14 +131,14 @@
         $('#paginationn').twbsPagination({
             totalPages: maxPages,
             visiblePages: 7,
-            startPage: result.page,
+            startPage: 1,
             onPageClick: function (event, page) {
                 var film = $('#search').val();
                 var page = page;
                 $('#film-body').text();
 
                 $.ajax({
-                    url: 'https://api.themoviedb.org/3/search/movie?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR&query=' + film + '&page=' + page + '&include_adult=false',
+                    url: '/api/film/' + film + '/' + page,
                     type: 'post',
                     dataType: 'json',
                     contentType: 'application/json',
@@ -145,7 +147,7 @@
             }
         });
 
-        result2 = result.results;
+        result2 = result.content;
 
         if (result2.length == 0) {
             console.log("qsdfsdf");
@@ -160,7 +162,6 @@
                 row.attr("id", 'rfilm' + id);
                 var col = row.find('#film-template');
                 col.attr("id", 'film' + id);
-
                 col.text(result2[i].title);
                 row.show();
                 $('#film-body').append(row);
@@ -168,7 +169,7 @@
                 image.src = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + result2[i].poster_path;
                 image.style.width = "100px";
                 image.style.height = "100px";
-                 // image.style.bottom = "0";
+                // image.style.bottom = "0";
                 //image.style.position = "absolute";
 
                 row.append(image);
@@ -226,22 +227,8 @@
     }
 
 
-    //page click action
-    $('#pagination-here').on("page", function (event, num) {
 
-        var film = $('#search').val();
-        var page = num;
-        $('#film-body').text();
 
-        $.ajax({
-            url: 'https://api.themoviedb.org/3/search/movie?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR&query=' + film + '&page=' + page + '&include_adult=false',
-            type: 'post',
-            dataType: 'json',
-            contentType: 'application/json',
-            success: onSuccessDialog
-        });
-
-    });
 
 </script>
 

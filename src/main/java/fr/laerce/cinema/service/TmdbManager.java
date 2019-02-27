@@ -1,14 +1,18 @@
 package fr.laerce.cinema.service;
 
 
+
 import fr.laerce.cinema.dao.FilmTmbdDao;
-import fr.laerce.cinema.dao.RoleDao;
 import fr.laerce.cinema.model.*;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +36,7 @@ public class TmdbManager {
     @Autowired
     FilmTmbdDao film_tmbdDao;
 
+
     @Autowired
     GenreManager genreManager;
 
@@ -49,7 +54,11 @@ public class TmdbManager {
 
     @Autowired
     ImageManager imm;
-
+    public Page<FilmTmbd> findAllByTitle(String title, Integer page){
+        Pageable pageable = PageRequest.of(page , 20);
+        Page<FilmTmbd> articlePage = film_tmbdDao.findAllByTitleContainingIgnoreCase(title,pageable);
+        return articlePage;
+    }
     private long secondsBeforeReset(String value){
         long timestamp = Long.valueOf(stripBraces(value));
         LocalDateTime resetTime =
@@ -71,6 +80,43 @@ public class TmdbManager {
             Thread.sleep(tempRest);
             System.out.println("pause de :"+tempRest*1000);
         }
+    }
+    public Person importPersonne(JSONObject role,Film filma){
+
+        BigInteger BigIntegerId = role.getBigInteger("id");
+        RestTemplate template = new RestTemplate();
+        Person personne = null;
+        if (!personManager.existsByIdtmbd(BigIntegerId)){
+
+            String resourceCreditcast = "https://api.themoviedb.org/3/person/"+BigIntegerId+"?api_key="+apiKey+"&language=fr-FR";
+            ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
+            long reset = secondsBeforeReset(responsecast.getHeaders().get("x-ratelimit-reset").toString());
+            try {
+                stopSyteme(stripBraces(responsecast.getHeaders().get("x-ratelimit-remaining").toString()),reset);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            JSONObject person = new JSONObject(responsecast.getBody());
+            personne = new Person();
+            String ann2 = person.optString("birthday");
+            if (ann2.length()!=0){
+                personne.setBirthday(LocalDate.parse(ann2));
+            }
+            String filename2 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+person.optString("profile_path");
+            try {
+                InputStream is2 = new URL(filename2).openStream();
+                imm.savePhoto(personne,is2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            personne.setName(person.optString("name"));
+            personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
+            return personManager.save(personne);
+        }
+        else{
+            return personManager.findByIdtmbd(BigIntegerId);
+        }
+
     }
 
     public Film peuplerFilm(BigInteger id) throws InterruptedException {
@@ -136,33 +182,7 @@ public class TmdbManager {
         JSONArray cast = (JSONArray) credit.get("cast");
         for (int i = 0; i < cast.length(); i++ ) {
             JSONObject role = (JSONObject) cast.get(i);
-            BigInteger BigIntegerId = role.getBigInteger("id");
-            Person personne = null;
-            if (!personManager.existsByIdtmbd(BigIntegerId)){
-                String resourceCreditcast = "https://api.themoviedb.org/3/person/"+BigIntegerId+"?api_key="+apiKey+"&language=fr-FR";
-                ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
-                reset = secondsBeforeReset(responsecast.getHeaders().get("x-ratelimit-reset").toString());
-                stopSyteme(stripBraces(responsecast.getHeaders().get("x-ratelimit-remaining").toString()),reset);
-                JSONObject person = new JSONObject(responsecast.getBody());
-                personne = new Person();
-                String ann2 = person.optString("birthday");
-                if (ann2.length()!=0){
-                    personne.setBirthday(LocalDate.parse(ann2));
-                }
-                String filename2 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+person.optString("profile_path");
-                try {
-                    InputStream is2 = new URL(filename2).openStream();
-                    imm.savePhoto(personne,is2);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                personne.setName(person.optString("name"));
-                personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
-                personne = personManager.save(personne);
-            }
-            else{
-                personne = personManager.findByIdtmbd(BigIntegerId);
-            }
+            Person personne = importPersonne(role,filma);
             if (!roleManager.existsByNameAndActorAndFilm(role.optString("character"),personne,filma)){
                 Play play = new Play();
                 play.setName(role.optString("character"));
@@ -177,33 +197,7 @@ public class TmdbManager {
         for (int i = 0; i < crew.length(); i++ ) {
             JSONObject role = (JSONObject) crew.get(i);
             if (role.getString("job").equals("Director")) {
-                Person personne = null;
-                BigInteger BigIntegerId = role.getBigInteger("id");
-                if (!personManager.existsByIdtmbd(BigIntegerId)){
-                    String resourceCreditcast = "https://api.themoviedb.org/3/person/" + BigIntegerId + "?api_key=" + apiKey + "&language=fr-FR";
-                    ResponseEntity<String> responsecast = template.getForEntity(resourceCreditcast, String.class);
-                    reset = secondsBeforeReset(responsecast.getHeaders().get("x-ratelimit-reset").toString());
-                    stopSyteme(stripBraces(responsecast.getHeaders().get("x-ratelimit-remaining").toString()),reset);
-                    JSONObject person = new JSONObject(responsecast.getBody());
-                    personne = new Person();
-                    String ann3 = person.optString("birthday");
-                    if (ann3.length() != 0) {
-                        personne.setBirthday(LocalDate.parse(ann3));
-                    }
-                    String filename3 = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + person.optString("profile_path");
-                    try {
-                        InputStream is = new URL(filename3).openStream();
-                        imm.savePhoto(personne, is);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    personne.setName(person.optString("name"));
-                    personne.setIdtmbd(BigInteger.valueOf(role.optInt("id")));
-                    personne = personManager.save(personne);
-                }
-                else{
-                    personne = personManager.findByIdtmbd(BigIntegerId);
-                }
+                Person personne = importPersonne(role,filma);
                 filma.setDirector(personne);
                 filmManager.save2(filma);
 

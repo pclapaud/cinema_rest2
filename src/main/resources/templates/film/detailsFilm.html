@@ -10,6 +10,8 @@
 <body>
 <div th:include="fragments/layout :: header-page">
 </div>
+
+<div th:text="${flashmessage}"></div>
 <table bgcolor="#008b8b" >
     <tr><td bgcolor="#6a5acd" style="text-align: center;  vertical-align: middle;"colspan="3"><h1>Informations du film</h1></td></tr>
 
@@ -154,20 +156,20 @@
             "imagePath" : $('#film-path').val(),
 
         };
-        var container = {
+        var containerJsonForFilm = {
             "film" : roleValue,
             "director": $('#film-director').val(),
             "genres": $('#film-genres').val(),
             // "file": $('#film-file').val()
         }
-        console.log(container);
+        console.log(containerJsonForFilm);
         $.ajax({
             url: '/api/film',
             type: 'post',
             dataType: 'json',
             contentType: 'application/json',
             success: onSuccessAdd,
-            data: JSON.stringify(container)
+            data: JSON.stringify(containerJsonForFilm)
         });
     }
     function formulaireModRole(id){

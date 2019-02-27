@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigInteger;
 
@@ -44,11 +45,17 @@ public class FilmController {
         assert(filmManager != null);
 
     }
-
-    @GetMapping("/test")
-    public String test() {
-
+    @GetMapping("/")
+    public String index() {
+        return "redirect:list";
+    }
+    @GetMapping("/rechercheImportTmdb")
+    public String rechercheImportTmdb() {
         return "film/search";
+    }
+    @GetMapping("/rechercheBDD")
+    public String rechercheBDD() {
+        return "film/searchBDD";
     }
 
     @GetMapping("/list")
@@ -119,7 +126,7 @@ public class FilmController {
     }
 
     @PostMapping("/modrole/{id}")
-    public String modRole(@PathVariable("id") long roleId, @ModelAttribute Play role) {
+    public String modRole(@ModelAttribute Play role) {
         filmManager.saveRole(role);
         return "redirect:/film/mod/" + role.getFilm().getId();
     }
@@ -136,10 +143,11 @@ public class FilmController {
     }
 
 
-    @GetMapping("/A/")
-    public String modfilm2(@RequestParam("id") BigInteger tmbdId) throws InterruptedException {
+    @GetMapping("/importerFilmTmdb/")
+    public String modfilm2(RedirectAttributes redi, @RequestParam("id") BigInteger tmbdId) throws InterruptedException {
 
         long id = tmbdManager.peuplerFilm(tmbdId).getId();
+        redi.addFlashAttribute("flashmessage","import: ok");
         return "redirect:/film/details/"+id;
     }
 }

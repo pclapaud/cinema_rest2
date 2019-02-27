@@ -47,7 +47,7 @@ public class FilmRestController {
     }
 
     @PostMapping("")
-    public Film addfilm(@RequestBody Container container){
+    public Film addfilm(@RequestBody ContainerJsonForFilm container){
         Film film = container.film;
         Person director = personManager.findById(container.director);
         film.setDirector(director);
@@ -104,5 +104,4 @@ public class FilmRestController {
         filmDao.delete(film);
         return film;
     }
-
 }
