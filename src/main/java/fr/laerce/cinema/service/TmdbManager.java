@@ -164,9 +164,7 @@ public class TmdbManager {
 
             }
             filma = filmManager.save2(filma);
-            System.out.println("--------\nRequetes restantes : "+stripBraces(response.getHeaders().get("x-ratelimit-remaining").toString()));
             reset = secondsBeforeReset(response.getHeaders().get("x-ratelimit-reset").toString());
-            System.out.println("Temps restant avant reset : "+reset+"\n\n");
         }
         else {
             filma = filmManager.getByIdtmbd(id);
@@ -203,10 +201,8 @@ public class TmdbManager {
 
             }
         }
-        System.out.println("--------\nRequetes restantes : "+stripBraces(response.getHeaders().get("x-ratelimit-remaining").toString()));
         reset = reset = secondsBeforeReset(response.getHeaders().get("x-ratelimit-reset").toString());
-        System.out.println("Temps restant avant reset : "+reset+"\n\n");
-
+        System.out.println("finit one");
         return filma;
     }
 
@@ -224,7 +220,6 @@ public class TmdbManager {
             Long longId = genre.getLong("id");
             String name = genre.getString("name");
             Genre genree =genreManager.getById(longId);
-            System.out.println(genre);
 
             if (genree == null) {
                 genree = new Genre();

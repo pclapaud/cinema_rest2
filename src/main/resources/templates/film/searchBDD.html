@@ -97,14 +97,14 @@
 <script type="application/javascript">
 
     $('#rfilm-template').hide();
-    var page = 0;
+
     function search() {
         var film = $('#search').val();
         $('#film-body').text();
         $('#paginationn').empty();
         $('#paginationn').removeData("twbs-pagination");
         $('#paginationn').unbind("page");
-        var page = 0;
+        var page = 1;
         $.ajax({
             url: '/api/film/' + film+'/'+page,
             type: 'post',
@@ -121,7 +121,7 @@
     function onSuccessDialog(result) {
         $('#film-body').html('');
         console.log(result);
-        var page = 0;
+        var page = 1;
         let maxPages=result.totalPages;
 
         if (maxPages>1000){
@@ -134,6 +134,7 @@
             startPage: 1,
             onPageClick: function (event, page) {
                 var film = $('#search').val();
+                console.log(page);
                 var page = page;
                 $('#film-body').text();
 

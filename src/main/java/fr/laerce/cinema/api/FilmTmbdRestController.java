@@ -41,7 +41,7 @@ public class FilmTmbdRestController {
     }
     @PostMapping("/{title}/{page}")
     public Page<FilmTmbd> remove(@PathVariable("title") String title,@PathVariable("page") String page){
-        Page<FilmTmbd> resultat = tmdbManager.findAllByTitle(title,Integer.parseInt(page));
+        Page<FilmTmbd> resultat = tmdbManager.findAllByTitle(title,Integer.parseInt(page)-1);
         return resultat;
     }
 }
