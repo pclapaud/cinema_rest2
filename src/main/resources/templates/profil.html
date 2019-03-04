@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+    <head>
+        <title>Spring Security Example</title>
+    </head>
+    <body>
+        <h1>Welcome on your profil page!</h1>
+         <p sec:authorize="hasAnyAuthority('ROLE_USER')">Pour tous les USER</p>
+            <a  th:href="'/editpassword/'+${userU.getId()}">editer mon mdp</a>
+        <p sec:authorize="hasAuthority('ADMIN')">Pour les ADMIN</p>
+
+        <p sec:authorize="hasAuthority('ADMIN')">Editer les mdp d'un utilisateur <select   onchange="location = this.value;">
+            <option th:each="user2: ${users}"  th:value="'/editpassword/'+${user2.getId()}" th:text="${user2.getName()}"></option>
+        </select>
+        </p>
+    </body>
+</html>
