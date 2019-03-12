@@ -98,9 +98,12 @@
 
     $('#rfilm-template').hide();
 
+
+    //tape une recherche
     function search() {
         var film = $('#search').val();
         $('#film-body').text();
+        //clean le cache de la pagination(reset le nombre de page entre chque recherche)
         $('#paginationn').empty();
         $('#paginationn').removeData("twbs-pagination");
         $('#paginationn').unbind("page");
@@ -113,23 +116,22 @@
         });
     }
 
-    function exitDialog() {
-        $('.ui.modal').modal('hide');
-    }
+
 
     function onSuccessDialog(result) {
         $('#film-body').html('');
         console.log(result);
         let maxPages=result.total_pages;
-
+        //TMBD limite le nombre de page visible dans la versio ngratuit a 1000
         if (maxPages>1000){
             maxPages=1000;
         };
-
+        //pagination
         $('#paginationn').twbsPagination({
             totalPages: maxPages,
             visiblePages: 7,
             startPage: result.page,
+            //event au changement de page
             onPageClick: function (event, page) {
                 var film = $('#search').val();
                 var page = page;
@@ -144,7 +146,7 @@
                 });
             }
         });
-
+        //la liste de film est dans l'attribut results
         result2 = result.results;
 
         if (result2.length == 0) {
@@ -179,13 +181,9 @@
         }
 
     }
-
+    //on recherche le film selectionne par l'utilisateur dans tmbd
     function openDialogMod(idFilm) {
-
-
         var filename = 'https://api.themoviedb.org/3/movie/' + idFilm + '?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR';
-
-
         $.ajax({
             url: 'https://api.themoviedb.org/3/movie/' + idFilm + '?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR',
             type: 'get',
@@ -195,7 +193,7 @@
             error: onError
         });
     }
-
+    //on genere la modal du film selectionner
     function onSuccessA(result) {
         console.log(result);
         $('#id-film').val(result.id);
@@ -225,23 +223,9 @@
         alert("Echec de l'opération\n" + jqXHR.responseJSON.message);
     }
 
-
-    //page click action
-    $('#pagination-here').on("page", function (event, num) {
-
-        var film = $('#search').val();
-        var page = num;
-        $('#film-body').text();
-
-        $.ajax({
-            url: 'https://api.themoviedb.org/3/search/movie?api_key=e7e21157a30acfe8e589e73e95b74d44&language=fr-FR&query=' + film + '&page=' + page + '&include_adult=false',
-            type: 'post',
-            dataType: 'json',
-            contentType: 'application/json',
-            success: onSuccessDialog
-        });
-
-    });
+    function exitDialog() {
+        $('.ui.modal').modal('hide');
+    }
 
 </script>
 

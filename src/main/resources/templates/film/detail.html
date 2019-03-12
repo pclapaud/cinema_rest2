@@ -6,6 +6,39 @@
     <div th:replace="fragments/layout :: header-css">
 
     </div>
+    <style>
+        .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+            z-index: 2;
+            color: #fff;
+            cursor: default;
+            background-color: #428bca;
+            border-color: #428bca;
+        }
+        .pagination > li > a, .pagination > li > span {
+            position: relative;
+            float: left;
+            padding: 6px 12px;
+            margin-left: -1px;
+            line-height: 1.42857143;
+            color: #428bca;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        .pagination {
+            display: flex;
+            padding-left: 0;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        ul, ol {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        #film-body{
+            display:flex;
+        }
+    </style>
 </head>
 <body>
 
@@ -30,6 +63,20 @@
             <h4 th:each="role: ${film.roles}">
                 <span th:text="${role.actor.name}">Doe</span> joue : <span th:text="${role.name}">un rôle</span>
             </h4>
+            <h3>Commentaires</h3>
+            <form action="/film/addCommentaire"></form>
+            <input id="maxPages" type="number" th:value="${maxPages}">
+            <input id="film-id" type="number" th:value="${film.getId()}">
+            <div id="template" >
+                <span id="template-name">Doe</span>  a posté le <span></span>  : <span id="template-commentaire">un commentaire</span>
+            </div>
+
+            <div id="film-body" th:each="commentaire: ${commentaires}">
+
+                <span th:text="${commentaire.getUser().getName()}">Doe</span> a posté le <span th:text="${commentaire.getDate()}">Doe</span>  : <span th:text="${commentaire.getArticle()}">un commentaire</span>
+            </div>
+            <ul id="paginationn" class="pagination-lg pagination"></ul>
+
 
         </div>
     </div>
@@ -38,8 +85,66 @@
 
 
 <div th:include="fragments/layout :: footer-js"></div>
+<script src="/js/pagination.js" th:src="@{/js/pagination.js}"></script>
 <script type="application/javascript">
     $('#menu-films').addClass("active");
+    var maxPages = $('#maxPages').val();
+
+
+    $('#paginationn').twbsPagination({
+        totalPages: maxPages,
+        visiblePages: 7,
+        startPage: 1,
+        //event au changement de page
+        onPageClick: function (event, page) {
+            var filmId = $('#film-id').val();
+            var page = page;
+            $('#film-body').text();
+
+            $.ajax({
+                url: '/api/film/paginationFilmCommentaire/'+filmId+'/'+page,
+                type: 'Get',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: onSuccessDialog,
+                error: onError
+            });
+        }
+    });
+
+    function onSuccessDialog(result) {
+
+
+
+        $('#film-body').html('');
+
+
+        //la liste de film est dans l'attribut results
+        result2 = result.content;
+        console.log(result2);
+         for (var i = 0; i < result2.length; i++) {
+
+                var div = $('#template').clone();
+                var br = document.createElement("br");
+                $('#film-body').append(div);
+                $('#film-body').append(br);
+        //         $('#rfilm' + id).on('click', function () {
+        //             openDialogMod(id);
+        //         });
+            }
+
+
+     }
+    function onError(jqXHR, textStatus, errorThrown) {
+        console.log('jqXHR:');
+        console.log(jqXHR);
+        console.log("message d'erreur: " + jqXHR.responseJSON.message);
+        console.log('textStatus:');
+        console.log(textStatus);
+        console.log('errorThrown:');
+        console.log(errorThrown);
+        alert("Echec de l'opération\n" + jqXHR.responseJSON.message);
+    }
 </script>
 </body>
 </html>

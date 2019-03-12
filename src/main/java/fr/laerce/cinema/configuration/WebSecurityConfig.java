@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -35,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private HttpSession httpSession;
 
-    @Autowired
+    @Resource
     public void setUserDetailsService(JpaUserDetailsService jpaUserDetailsService){
         this.jpaUserDetailsService = jpaUserDetailsService;
     }

@@ -8,10 +8,12 @@ import fr.laerce.cinema.service.FilmManager;
 import fr.laerce.cinema.service.ImageManager;
 import fr.laerce.cinema.service.PersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,12 @@ public class FilmRestController {
     @GetMapping("/{id}")
     public Film getById(@PathVariable("id")long id){
         return filmManager.getById(id);
+    }
+    @GetMapping("/paginationFilmCommentaire/{id}/{page}")
+    public Page<Review> getById(@PathVariable("id") long id, @PathVariable("page")int page){
+        Film film = filmManager.getById(id);
+        Page<Review> commentaires = filmManager.findAllByFilm(film,page-1);
+        return commentaires;
     }
 
     @PostMapping("")

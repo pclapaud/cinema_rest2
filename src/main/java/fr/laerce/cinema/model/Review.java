@@ -52,7 +52,6 @@ public class Review {
     private Film film;
     @ManyToOne
     @JoinColumn(name="user_id")
-    @JsonIgnore
     private User user;
     private int state = WAINTING_MODERATION;
 

@@ -2,10 +2,16 @@ package fr.laerce.cinema.service;
 
 import fr.laerce.cinema.dao.FilmDao;
 import fr.laerce.cinema.dao.GenreDao;
+import fr.laerce.cinema.dao.ReviewDao;
 import fr.laerce.cinema.dao.RoleDao;
 import fr.laerce.cinema.model.Film;
+import fr.laerce.cinema.model.FilmTmbd;
 import fr.laerce.cinema.model.Play;
+import fr.laerce.cinema.model.Review;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -17,17 +23,30 @@ public class FilmManager {
 
     private FilmDao filmDao;
     private RoleDao roleDao;
+    private ReviewDao reviewDao;
 
     /**
      * Constructeur utilisé par Spring pour la construction du bean
      * @ param  genre Dao le DAO qui gère le genre dans le système de persistance, ne peut être null
      */
-    public FilmManager(FilmDao filmDao,RoleDao roleDao){
+    public FilmManager(ReviewDao reviewDao,FilmDao filmDao,RoleDao roleDao){
         this.filmDao = filmDao;
         this.roleDao = roleDao;
+        this.reviewDao = reviewDao;
 
+        assert(reviewDao != null);
         assert(filmDao != null);
         assert(roleDao != null);
+    }
+    public Page<Review> findAllByFilm(Film film, Integer page){
+        Pageable pageable = PageRequest.of(page , 20);
+        Page<Review> articlePage = reviewDao.findAllByFilm(film,pageable);
+        return articlePage;
+    }
+    public List<Review> findAllByFilm(Film film){
+
+        List<Review> articlePage = reviewDao.findAllByFilm(film);
+        return articlePage;
     }
 
 

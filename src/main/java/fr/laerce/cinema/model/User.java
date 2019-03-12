@@ -1,5 +1,7 @@
 package fr.laerce.cinema.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
@@ -74,6 +76,7 @@ public class User {
 
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinTable(name="USER_GROUP",
             joinColumns =@JoinColumn(name = "ID_USER", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "ID_GROUP", referencedColumnName = "ID"))

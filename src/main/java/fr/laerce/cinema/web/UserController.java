@@ -6,6 +6,7 @@ import fr.laerce.cinema.dao.GroupDao;
 import fr.laerce.cinema.model.User;
 import fr.laerce.cinema.service.JpaUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,12 +39,14 @@ public class UserController {
         return "redirect:/film/list";
     }
     @GetMapping("/profil/{name}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String home2(Model model, @PathVariable("name") String name){
         model.addAttribute("userU",jpaUserService.findByUserName(name));
         model.addAttribute("users",jpaUserService.findAll());
         return "profil";
     }
     @GetMapping("/editpassword/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public String modpasswordForm(Model model, @PathVariable("id")long id){
         model.addAttribute("user",jpaUserService.findByUserId(id));
         model.addAttribute("idUser",id);

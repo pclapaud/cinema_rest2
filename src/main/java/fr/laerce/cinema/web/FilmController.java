@@ -6,12 +6,14 @@ import fr.laerce.cinema.service.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Controller
 @RequestMapping("/film")
@@ -27,8 +29,9 @@ public class FilmController {
     FilmTmbdDao film_tmbdDao;
     RoleDao roledao;
     TmdbManager tmbdManager;
+    ReviewDao reviewDao;
 
-    public FilmController(TmdbManager tmbdManager,RoleDao roledao,FilmTmbdDao film_tmbdDao,GenreManager genreManager,ImageManager imm,PersonManager personManager,FilmManager filmManager) {
+    public FilmController(ReviewDao reviewDao,TmdbManager tmbdManager,RoleDao roledao,FilmTmbdDao film_tmbdDao,GenreManager genreManager,ImageManager imm,PersonManager personManager,FilmManager filmManager) {
         this.tmbdManager = tmbdManager;
         assert(tmbdManager != null);
         this.roledao = roledao;
@@ -43,6 +46,9 @@ public class FilmController {
         assert(personManager != null);
         this.filmManager = filmManager;
         assert(filmManager != null);
+        this.reviewDao = reviewDao;
+        assert(reviewDao != null);
+
 
     }
     @GetMapping("/")
@@ -67,7 +73,12 @@ public class FilmController {
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") long id, Model model) {
-        model.addAttribute("film", filmManager.getById(id));
+        Film film = filmManager.getById(id);
+        Page<Review> commentaires = filmManager.findAllByFilm(film,0);
+        int maxPages = commentaires.getTotalPages();
+        model.addAttribute("film", film);
+        model.addAttribute("commentaires",commentaires);
+        model.addAttribute("maxPages",maxPages);
         return "film/detail";
     }
 
@@ -96,12 +107,14 @@ public class FilmController {
     }
     @GetMapping("/details/{id}")
     public String detailFilm(Model model, @PathVariable("id")long id){
-        model.addAttribute("film", filmManager.getById(id));
+        Film film = filmManager.getById(id);
+        model.addAttribute("film", film);
         model.addAttribute("persons", personManager.getAll());
-        model.addAttribute("roles", filmManager.getById(id).getRoles());
+        model.addAttribute("roles", film.getRoles());
         model.addAttribute("genres",genreManager.getAll());
+
         model.addAttribute("newrole",new Play());
-        return "Film/detailsFilm";
+        return "Film/detail";
     }
 
 

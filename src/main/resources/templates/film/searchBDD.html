@@ -226,7 +226,18 @@
         console.log(errorThrown);
         alert("Echec de l'opération\n" + jqXHR.responseJSON.message);
     }
-
+    $.ajax({
+        url: "Ton URL",
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        dataType: "text",
+        success: function (data) {
+            alert(data);
+        },
+        error: function (result) {
+            alert(result);
+        }
+    });
 
 
 
