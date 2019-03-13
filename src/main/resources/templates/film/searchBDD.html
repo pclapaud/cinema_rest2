@@ -106,11 +106,12 @@
         $('#paginationn').unbind("page");
         var page = 1;
         $.ajax({
-            url: '/api/film/' + film+'/'+page,
-            type: 'post',
+            url: '/api/filmtmbd/' + film+'/'+page,
+            type: 'get',
             dataType: 'json',
             contentType: 'application/json',
-            success: onSuccessDialog
+            success: onSuccessDialog,
+            error: onError
         });
     }
 
@@ -122,11 +123,8 @@
         $('#film-body').html('');
         console.log(result);
         var page = 1;
-        let maxPages=result.totalPages;
 
-        if (maxPages>1000){
-            maxPages=1000;
-        };
+        let maxPages=result.totalPages;
 
         $('#paginationn').twbsPagination({
             totalPages: maxPages,
@@ -139,8 +137,8 @@
                 $('#film-body').text();
 
                 $.ajax({
-                    url: '/api/film/' + film + '/' + page,
-                    type: 'post',
+                    url: '/api/filmtmbd/' + film + '/' + page,
+                    type: 'get',
                     dataType: 'json',
                     contentType: 'application/json',
                     success: onSuccessDialog
@@ -156,27 +154,29 @@
             $('#film-body').attr("style", "text-align: middle")
         }
         else {
-            var id = result2[0].id;
-            for (var i = 0; i < result2.length; i++) {
-                let id = result2[i].id;
-                var row = $('#rfilm-template').clone();
-                row.attr("id", 'rfilm' + id);
-                var col = row.find('#film-template');
-                col.attr("id", 'film' + id);
-                col.text(result2[i].title);
-                row.show();
-                $('#film-body').append(row);
-                var image = document.createElement("img");
-                image.src = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + result2[i].poster_path;
-                image.style.width = "100px";
-                image.style.height = "100px";
-                // image.style.bottom = "0";
-                //image.style.position = "absolute";
 
-                row.append(image);
-                $('#rfilm' + id).on('click', function () {
-                    openDialogMod(id);
-                });
+            // var id = result2[0].id;
+             for (var i = 0; i < result2.length; i++) {
+                 console.log(result2[0])
+                 var idtmbd = result2[i].idtmbd;
+                 var row = $('#rfilm-template').clone();
+                 row.attr("id", 'rfilm' + idtmbd);
+                 var col = row.find('#film-template');
+                 col.attr("id", 'film' + idtmbd);
+                 col.text(result2[i].title);
+                row.show();
+                 $('#film-body').append(row);
+                 var image = document.createElement("img");
+            //     image.src = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + result2[i].poster_path;
+                 image.style.width = "100px";
+                 image.style.height = "100px";
+                 // image.style.bottom = "0";
+                 //image.style.position = "absolute";
+            //
+                 row.append(image);
+                 $('#rfilm' + idtmbd).on('click', function () {
+                     openDialogMod(idtmbd);
+                 });
             }
         }
 
@@ -226,18 +226,6 @@
         console.log(errorThrown);
         alert("Echec de l'opération\n" + jqXHR.responseJSON.message);
     }
-    $.ajax({
-        url: "Ton URL",
-        type: "GET",
-        contentType: "application/json; charset=utf-8",
-        dataType: "text",
-        success: function (data) {
-            alert(data);
-        },
-        error: function (result) {
-            alert(result);
-        }
-    });
 
 
 

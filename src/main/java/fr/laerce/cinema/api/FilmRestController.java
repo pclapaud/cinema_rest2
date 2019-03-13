@@ -47,6 +47,8 @@ public class FilmRestController {
     public Film getById(@PathVariable("id")long id){
         return filmManager.getById(id);
     }
+
+
     @GetMapping("/paginationFilmCommentaire/{id}/{page}")
     public Page<Review> getById(@PathVariable("id") long id, @PathVariable("page")int page){
         Film film = filmManager.getById(id);

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/film")
+@RequestMapping("/api/filmtmbd")
 public class FilmTmbdRestController {
     private FilmManager filmManager;
     private PersonManager personManager;
@@ -39,9 +39,9 @@ public class FilmTmbdRestController {
         this.tmdbManager = tmdbManager;
         this.imm = imm;
     }
-    @PostMapping("/{title}/{page}")
-    public Page<FilmTmbd> remove(@PathVariable("title") String title,@PathVariable("page") String page){
-        Page<FilmTmbd> resultat = tmdbManager.findAllByTitle(title,Integer.parseInt(page)-1);
+    @GetMapping("/{title}/{page}")
+    public Page<FilmTmbd> hj(@PathVariable("title") String title,@PathVariable("page") int page){
+        Page<FilmTmbd> resultat = tmdbManager.findAllByTitle(title,page-1);
         return resultat;
     }
 }

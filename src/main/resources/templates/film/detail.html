@@ -38,6 +38,10 @@
         #film-body{
             display:flex;
         }
+        div {
+            display: inline-block;
+            background: lightgray;
+        }
     </style>
 </head>
 <body>
@@ -70,11 +74,12 @@
             <div id="template" >
                 <span id="template-name">Doe</span>  a posté le <span></span>  : <span id="template-commentaire">un commentaire</span>
             </div>
+<div id="film-body" >
+            <div th:each="commentaire: ${commentaires}">
 
-            <div id="film-body" th:each="commentaire: ${commentaires}">
-
-                <span th:text="${commentaire.getUser().getName()}">Doe</span> a posté le <span th:text="${commentaire.getDate()}">Doe</span>  : <span th:text="${commentaire.getArticle()}">un commentaire</span>
+                <span  th:text="${commentaire.getUser().getName()}">Doe</span> a posté le <span th:text="${commentaire.getDate()}">Doe</span>  : <span th:text="${commentaire.getArticle()}">un commentaire</span>
             </div>
+</div>
             <ul id="paginationn" class="pagination-lg pagination"></ul>
 
 
@@ -124,13 +129,24 @@
         console.log(result2);
          for (var i = 0; i < result2.length; i++) {
 
-                var div = $('#template').clone();
-                var br = document.createElement("br");
-                $('#film-body').append(div);
-                $('#film-body').append(br);
-        //         $('#rfilm' + id).on('click', function () {
-        //             openDialogMod(id);
-        //         });
+             var div = document.createElement("div");
+             div.classList.add("two");
+             div.classList.add("wide");
+             div.classList.add("column");
+             var br = document.createElement("br");
+                var span = document.createElement("span");
+                span.textContent =(result2[i].user.name+"a posté le :")
+                 var span2 = document.createElement("span");
+                 span2.textContent =(result2[i].date+" : ")
+             var span3 = document.createElement("span");
+             span3.textContent = (result2[i].article)
+
+
+             div.append(span);
+             div.append(span2);
+             div.append(span3);
+             $('#film-body').append(div);
+             $('#film-body').append(br);
             }
 
 
